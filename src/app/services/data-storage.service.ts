@@ -16,7 +16,7 @@ export interface Product {
   created_at: string,
   expiration_data: string | null,
   expiration_type: string,
-  fields: Fields,
+  fields: { [key: string]: any },
   id: number,
   manufacture_date: string,
   name: string,
@@ -26,12 +26,6 @@ export interface Product {
 interface Category {
   id: number;
   name: string;
-}
-
-interface Fields {
-  name: string;
-  value: string;
-  is_date: boolean;
 }
 
 
@@ -47,7 +41,7 @@ export class DataStorageService {
 
   public fetchProducts(): Observable<Product[]> {
     let params = new HttpParams();
-    // params = params.append('limit', '0');
+    // params = params.append('limit', '5');
     // params = params.append('offset', '0');
 
     return this.http.get<Product[] | ProductResponse>(environment.productsUrl, {params})
