@@ -15,7 +15,7 @@ export interface Product {
   comment: string,
   created_at: string,
   expiration_data: string | null,
-  expiration_type: string,
+  expiration_type: 'non_expirable' | 'expirable',
   fields: { [key: string]: any },
   id: number,
   manufacture_date: string,
