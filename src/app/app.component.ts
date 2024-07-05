@@ -11,17 +11,15 @@ import { DialogProductComponent } from "./dialog-product/dialog-product.componen
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit{
-  title = 'app';
+  title = 'Products';
 
   products: Product[] = [];
   categories: Category[] = [];
 
   error: string = '';
-
   loading: boolean = true;
 
-  displayedColumns: string[] = ['position', 'name', 'category', 'comment','expiration_date', 'manufacture_date', 'created_at', 'updated_at', 'edit'];
-
+  displayedColumns: string[] = ['position', 'name', 'category', 'comment', 'expiration_date', 'manufacture_date', 'created_at', 'updated_at', 'edit'];
 
   constructor(
     private dataStorageService: DataStorageService,

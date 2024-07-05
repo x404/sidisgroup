@@ -70,7 +70,6 @@ export class DataStorageService {
     return this.http.get<Category[]>(environment.categoryUrl)
   }
 
-
   public addProduct(product: ProductDataForCreation): Observable<ProductDataForCreation[]> {
     console.log(product);
     return this.http.post<ProductDataForCreation[]>(environment.productsUrl, product)

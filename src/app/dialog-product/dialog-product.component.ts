@@ -85,9 +85,10 @@ export class DialogProductComponent implements OnInit{
       manufacture_date,
     } = this.productForm.value;
 
-    const expirationDate = String(this.isExpirable ? this.datePipe.transform(expiration_date, 'yyyy-MM-dd'): null);
+    const expirationDate: string | null = this.isExpirable ? String(this.datePipe.transform(expiration_date, 'yyyy-MM-dd')): null;
     const manufactureDate = String(this.datePipe.transform(this.productForm.get('manufacture_date')?.value, 'yyyy-MM-dd'));
 
+    console.log('expirationDate=', expirationDate)
     if (!categoryId || !name || !comment) {
       return;
     }
