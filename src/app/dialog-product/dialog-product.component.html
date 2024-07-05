@@ -39,9 +39,18 @@
       ></textarea>
     </mat-form-field>
 
+    <mat-checkbox
+      formControlName="expiration_type"
+      (click)="onToggleExpirationType()"
+      class="mb-2"
+    >
+      Expirable
+    </mat-checkbox>
+
     <mat-form-field
       appearance="fill"
-      class="my-1"
+      class="mt-1 mb-2"
+      *ngIf="isExpirable"
     >
       <mat-label>Expiration date</mat-label>
       <input

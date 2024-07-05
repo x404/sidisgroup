@@ -17,6 +17,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatSelectModule } from "@angular/material/select";
 import { MatNativeDateModule } from "@angular/material/core";
 import { DatePipe } from "@angular/common";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 
 @NgModule({
   declarations: [
@@ -24,21 +25,22 @@ import { DatePipe } from "@angular/common";
     ProductComponent,
     DialogProductComponent
   ],
-    imports: [
-        BrowserModule,
-        HttpClientModule,
-        BrowserAnimationsModule,
-        MatTableModule,
-        MatInputModule,
-        MatDatepickerModule,
-        ReactiveFormsModule,
-        MatButtonModule,
-        MatIconModule,
-        MatTooltipModule,
-        MatDialogModule,
-        MatSelectModule,
-        MatNativeDateModule,
-    ],
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    MatTableModule,
+    MatInputModule,
+    MatDatepickerModule,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatIconModule,
+    MatTooltipModule,
+    MatDialogModule,
+    MatSelectModule,
+    MatNativeDateModule,
+    MatCheckboxModule,
+  ],
   providers: [DatePipe],
   bootstrap: [AppComponent]
 })

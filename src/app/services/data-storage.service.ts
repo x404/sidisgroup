@@ -11,18 +11,18 @@ export interface ProductResponse {
 }
 
 export interface Product {
-  comment: string,
+  comment?: string | null,
   created_at?: string,
-  expiration_data: string | null,
+  expiration_date?: string | null,
   expiration_type: 'non_expirable' | 'expirable',
   fields: Fields[],
-  id: number,
   manufacture_date: string,
   name: string,
   updated_at?: string,
 }
 
 export interface ProductForRetrieval extends Product {
+  id: number,
   category: Category,
 }
 
