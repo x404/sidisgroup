@@ -30,7 +30,7 @@ export interface ProductDataForCreation extends Product {
   category_id: number,
 }
 
-interface Category {
+export interface Category {
   id: number;
   name: string;
 }
@@ -66,20 +66,8 @@ export class DataStorageService {
      );
   }
 
-
-  public fetchCategories(): Observable<Product[]> {
-    let params = new HttpParams();
-    // params = params.append('limit', '5');
-    // params = params.append('offset', '0');
-
-    return this.http.get<Product[] | ProductResponse>(environment.productsUrl, {params})
-               .pipe(
-                 mergeMap((response) => {
-                   return Array.isArray(response)
-                     ? of(response)
-                     : of(response.results);
-                 })
-               );
+  public fetchCategories(): Observable<Category[]> {
+    return this.http.get<Category[]>(environment.categoryUrl)
   }
 
 
@@ -87,5 +75,4 @@ export class DataStorageService {
     console.log(product);
     return this.http.post<ProductDataForCreation[]>(environment.productsUrl, product)
   }
-
 }

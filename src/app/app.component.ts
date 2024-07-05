@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { DataStorageService, Product } from "./services/data-storage.service";
+import { Category, DataStorageService, Product } from "./services/data-storage.service";
 import { environment } from "../environment/environment";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogProductComponent } from "./dialog-product/dialog-product.component";
@@ -14,6 +14,8 @@ export class AppComponent implements OnInit{
   title = 'app';
 
   products: Product[] = [];
+  categories: Category[] = [];
+
   error: string = '';
 
   loading: boolean = true;
@@ -29,6 +31,7 @@ export class AppComponent implements OnInit{
 
   ngOnInit(): void {
     this.fetchProducts();
+    this.fetchCategories();
   }
 
   public fetchProducts(){
@@ -48,12 +51,28 @@ export class AppComponent implements OnInit{
       )
   }
 
+  public fetchCategories(){
+    this.dataStorageService.fetchCategories()
+        .subscribe({
+            next: (response: Category[]) => {
+              this.categories = response;
+              console.log('this.categories=', this.categories);
+              // this.loading = false;
+            },
+            error: (error) => {
+              console.log('error cat', error)
+              // this.error = error.status === 404 ? `Error: ${error.status}. The requested resource was not found on this server.` : error.message;
+            }
+          }
+        )
+  }
+
 
   openDialog(): void {
     const dialogRef = this.dialog.open(DialogProductComponent, {
       width: '450px',
       height: '650px',
-      data: this.products,
+      data: {categories: this.categories},
     });
 
     dialogRef.afterClosed().subscribe(result => {

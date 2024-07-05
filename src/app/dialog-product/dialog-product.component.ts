@@ -1,12 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
-import { ProductDataForCreation, DataStorageService } from "../services/data-storage.service";
+import { ProductDataForCreation, DataStorageService, Category } from "../services/data-storage.service";
 import { DatePipe } from "@angular/common";
 
 export interface DialogData {
-  animal: string;
-  name: string;
+  categories: Category[];
 }
 
 
@@ -20,15 +19,12 @@ export class DialogProductComponent implements OnInit{
     name: new FormControl('', Validators.required),
     category_id: new FormControl('', Validators.required),
     comment: new FormControl('Hello guys'),
-    // created_at: new FormControl(''),
-    // updated_at: new FormControl(''),
     expiration_date: new FormControl(new Date()),
     manufacture_date: new FormControl(new Date(), Validators.required),
   })
 
-  //   ['position', 'name', 'category', 'comment', 'created_at', 'updated_at','expiration_date', 'manufacture_date', 'edit'];
-
   error: string = '';
+  categories: Category[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<DialogProductComponent>,
@@ -41,11 +37,8 @@ export class DialogProductComponent implements OnInit{
 
 
   ngOnInit(): void {
-    // console.log( this.data)
-    // this.productForm = this.formBuilder.group({
-    //   name: ['', Validators.required],
-    // })
-
+    this.categories = this.data?.categories;
+    console.log(this.data.categories);
   }
 
   onNoClick(): void {
