@@ -1,7 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { FormControl, FormGroup, Validators } from "@angular/forms";
-import { ProductDataForCreation, DataStorageService, Category, Product } from "../services/data-storage.service";
+import { FormBuilder, FormArray, Validators, FormGroup } from "@angular/forms";
+import {
+  ProductDataForCreation,
+  DataStorageService,
+  Category,
+  Product,
+  Fields
+} from "../services/data-storage.service";
 import { DatePipe } from "@angular/common";
 
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
@@ -41,14 +47,7 @@ export const MY_FORMATS = {
 
 
 export class DialogProductComponent implements OnInit{
-  productForm = new FormGroup({
-    name: new FormControl('', Validators.required),
-    category_id: new FormControl('', Validators.required),
-    comment: new FormControl('Hello guys'),
-    expiration_type: new FormControl(false),
-    expiration_date: new FormControl(new Date(), Validators.required),
-    manufacture_date: new FormControl(new Date(), Validators.required),
-  })
+  productForm: FormGroup;
 
   error: string = '';
   categories: Category[] = [];
@@ -59,17 +58,30 @@ export class DialogProductComponent implements OnInit{
     @Inject(MAT_DIALOG_DATA) public data: DialogData,
 
     public dataStorageService: DataStorageService,
-    private datePipe: DatePipe
-  ) {}
-
+    private datePipe: DatePipe,
+    private fb: FormBuilder
+  ) {
+    this.productForm = this.fb.group({
+      name: [''],
+      category_id: ['', Validators.required],
+      comment: ['Hello guys'],
+      expiration_type: [false],
+      expiration_date: [new Date(), Validators.required],
+      manufacture_date: [new Date(), Validators.required],
+      fields: this.fb.array([]),
+    })
+  }
 
   ngOnInit(): void {
     this.categories = this.data?.categories;
-    console.log(this.data.categories);
+  }
+
+  get fields(): FormArray {
+    return this.productForm.get('fields') as FormArray;
   }
 
   onSave() {
-    console.log('onSave');
+    console.log('onSave', this.productForm.get('fields')?.value);
   }
 
   onCancel() {
@@ -86,13 +98,19 @@ export class DialogProductComponent implements OnInit{
     } = this.productForm.value;
 
     const expirationDate: string | null = this.isExpirable ? String(this.datePipe.transform(expiration_date, 'yyyy-MM-dd')): null;
-    const manufactureDate = String(this.datePipe.transform(this.productForm.get('manufacture_date')?.value, 'yyyy-MM-dd'));
+    const manufactureDate = String(this.datePipe.transform(manufacture_date, 'yyyy-MM-dd'));
 
-    console.log('expirationDate=', expirationDate)
     if (!categoryId || !name || !comment) {
       return;
     }
 
+    const fields = this.fields.value.map((field: Fields) => ({
+      ...field,
+      value: field.is_date ? this.datePipe.transform(field.value, 'yyyy-MM-dd') : field.value
+    }));
+
+
+    console.log('field=', this.fields.value);
     const product: ProductDataForCreation = {
       ...this.productForm.value,
       category_id: +categoryId, // Get value from form control
@@ -101,13 +119,7 @@ export class DialogProductComponent implements OnInit{
       expiration_type: this.isExpirable ? expirationType.expirable : expirationType.non_expirable,
       expiration_date: expirationDate,
       manufacture_date: manufactureDate,
-      fields: [
-        {
-          name: "string",
-          value: "hello",
-          is_date: false
-        }
-      ]
+      fields
     };
 
     console.log('product=', product)
@@ -128,5 +140,20 @@ export class DialogProductComponent implements OnInit{
 
   onToggleExpirationType() {
     this.isExpirable = !!this.productForm.get('expiration_type')?.value;
+  }
+
+
+  addField() {
+    const field = this.fb.group({
+      name: ['', Validators.required],
+      value: ['', Validators.required],
+      is_date: [false],
+    });
+
+    this.fields.push(field);
+  }
+
+  removeField(index: number) {
+    this.fields.removeAt(index);
   }
 }

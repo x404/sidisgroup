@@ -10,7 +10,7 @@
       class="my-1"
     >
       <mat-label>Name</mat-label>
-      <input matInput formControlName="name" />
+      <input matInput formControlName="name"/>
     </mat-form-field>
 
     <mat-form-field
@@ -23,7 +23,7 @@
           *ngFor="let category of categories"
           [value]="category?.id"
         >
-          {{category?.name}}
+          {{ category?.name }}
         </mat-option>
       </mat-select>
     </mat-form-field>
@@ -78,7 +78,39 @@
       <mat-datepicker #manufacture_date_picker></mat-datepicker>
     </mat-form-field>
 
-    <p class="error" *ngIf="error">{{error}}</p>
+    <p class="error" *ngIf="error">{{ error }}</p>
+
+
+    <div formArrayName="fields">
+      <h3>Extra fields</h3>
+      <div *ngFor="let field of fields.controls; let i = index" [formGroupName]="i">
+        <mat-form-field appearance="fill" class="my-1">
+          <mat-label>Name</mat-label>
+          <input matInput formControlName="name">
+        </mat-form-field>
+
+        <div class="d-flex">
+          <mat-checkbox formControlName="is_date" class="mb-3 me-3 mt-3">Is Date</mat-checkbox>
+
+          <mat-form-field appearance="fill" class="my-1">
+            <mat-label>Value</mat-label>
+
+            <ng-container *ngIf="!field.get('is_date')?.value; else datePicker">
+              <input matInput formControlName="value">
+            </ng-container>
+            <ng-template #datePicker>
+              <input matInput [matDatepicker]="fieldDatePicker" formControlName="value">
+              <mat-datepicker-toggle matIconSuffix [for]="fieldDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #fieldDatePicker></mat-datepicker>
+            </ng-template>
+          </mat-form-field>
+        </div>
+
+        <button type="button" (click)="removeField(i)">Remove Field</button>
+      </div>
+      <button type="button" (click)="addField()">+ Add field</button>
+    </div>
+
   </div>
   <div mat-dialog-actions>
     <button mat-button (click)="onSave()" color="primary" cdkFocusInitial>Save</button>

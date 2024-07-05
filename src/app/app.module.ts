@@ -18,12 +18,15 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatNativeDateModule } from "@angular/material/core";
 import { DatePipe } from "@angular/common";
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { FormFieldsComponent } from './form-fields/form-fields.component';
+import { MatCardModule } from "@angular/material/card";
 
 @NgModule({
   declarations: [
     AppComponent,
     ProductComponent,
-    DialogProductComponent
+    DialogProductComponent,
+    FormFieldsComponent
   ],
   imports: [
     BrowserModule,
@@ -40,6 +43,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
     MatSelectModule,
     MatNativeDateModule,
     MatCheckboxModule,
+    MatCardModule,
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]

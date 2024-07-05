@@ -35,7 +35,7 @@ export interface Category {
   name: string;
 }
 
-interface Fields{
+export interface Fields{
   name: string,
   value: string,
   is_date: boolean
