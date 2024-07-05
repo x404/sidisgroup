@@ -1,0 +1,74 @@
+<h1 mat-dialog-title>Add product</h1>
+
+<form
+  [formGroup]="productForm"
+  (ngSubmit)="onSubmit()"
+>
+  <div mat-dialog-content>
+    <mat-form-field
+      appearance="fill"
+      class="my-1"
+    >
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" />
+    </mat-form-field>
+
+    <mat-form-field
+      appearance="fill"
+      class="my-1"
+    >
+      <mat-label>Select</mat-label>
+      <mat-select formControlName="category_id">
+        <mat-option value="0">-</mat-option>
+        <mat-option value="1">1</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field
+      appearance="fill"
+      class="my-1"
+    >
+      <mat-label>Comment</mat-label>
+      <textarea
+        matInput
+        formControlName="comment"
+      ></textarea>
+    </mat-form-field>
+
+    <mat-form-field
+      appearance="fill"
+      class="my-1"
+    >
+      <mat-label>Expiration date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker"
+        formControlName="expiration_date"
+      >
+      <mat-hint>YYYY-MM-DD</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field
+      appearance="fill"
+      class="my-1"
+    >
+      <mat-label>Manufacture date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="manufacture_date_picker"
+        formControlName="manufacture_date"
+      >
+      <mat-hint>YYYY-MM-DD</mat-hint>
+      <mat-datepicker-toggle matIconSuffix [for]="manufacture_date_picker"></mat-datepicker-toggle>
+      <mat-datepicker #manufacture_date_picker></mat-datepicker>
+    </mat-form-field>
+
+    <p class="error" *ngIf="error">{{error}}</p>
+  </div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="onSave()" color="primary" cdkFocusInitial>Save</button>
+    <button mat-button (click)="onCancel()" matDialogClose="">Cancel</button>
+  </div>
+</form>

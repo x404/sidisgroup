@@ -7,20 +7,27 @@ export interface ProductResponse {
   count: number,
   next: string | null,
   previous: string | null,
-  results: Product[]
+  results: ProductForRetrieval[]
 }
 
 export interface Product {
-  category: Category,
   comment: string,
-  created_at: string,
+  created_at?: string,
   expiration_data: string | null,
   expiration_type: 'non_expirable' | 'expirable',
-  fields: { [key: string]: any },
+  fields: Fields[],
   id: number,
   manufacture_date: string,
   name: string,
-  updated_at: string,
+  updated_at?: string,
+}
+
+export interface ProductForRetrieval extends Product {
+  category: Category,
+}
+
+export interface ProductDataForCreation extends Product {
+  category_id: number,
 }
 
 interface Category {
@@ -28,6 +35,11 @@ interface Category {
   name: string;
 }
 
+interface Fields{
+  name: string,
+  value: string,
+  is_date: boolean
+}
 
 @Injectable({
   providedIn: 'root'
@@ -35,16 +47,16 @@ interface Category {
 export class DataStorageService {
 
   constructor(
-    private http: HttpClient,
+    private http: HttpClient
   ) { }
 
 
-  public fetchProducts(): Observable<Product[]> {
+  public fetchProducts(): Observable<ProductForRetrieval[]> {
     let params = new HttpParams();
     // params = params.append('limit', '5');
     // params = params.append('offset', '0');
 
-    return this.http.get<Product[] | ProductResponse>(environment.productsUrl, {params})
+    return this.http.get<ProductForRetrieval[] | ProductResponse>(environment.productsUrl, {params})
      .pipe(
        mergeMap((response) => {
          return Array.isArray(response)
@@ -52,6 +64,28 @@ export class DataStorageService {
            : of(response.results);
        })
      );
+  }
+
+
+  public fetchCategories(): Observable<Product[]> {
+    let params = new HttpParams();
+    // params = params.append('limit', '5');
+    // params = params.append('offset', '0');
+
+    return this.http.get<Product[] | ProductResponse>(environment.productsUrl, {params})
+               .pipe(
+                 mergeMap((response) => {
+                   return Array.isArray(response)
+                     ? of(response)
+                     : of(response.results);
+                 })
+               );
+  }
+
+
+  public addProduct(product: ProductDataForCreation): Observable<ProductDataForCreation[]> {
+    console.log(product);
+    return this.http.post<ProductDataForCreation[]>(environment.productsUrl, product)
   }
 
 }

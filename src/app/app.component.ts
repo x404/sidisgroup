@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { DataStorageService, Product } from "./services/data-storage.service";
 import { environment } from "../environment/environment";
+import { MatDialog } from "@angular/material/dialog";
+import { DialogProductComponent } from "./dialog-product/dialog-product.component";
 
 
 @Component({
@@ -16,11 +18,12 @@ export class AppComponent implements OnInit{
 
   loading: boolean = true;
 
-  displayedColumns: string[] = ['position', 'name', 'category', 'comment', 'created_at', 'updated_at','expiration_date', 'manufacture_date'];
+  displayedColumns: string[] = ['position', 'name', 'category', 'comment', 'created_at', 'updated_at','expiration_date', 'manufacture_date', 'edit'];
 
 
   constructor(
     private dataStorageService: DataStorageService,
+    public dialog: MatDialog
   ) {
   }
 
@@ -28,7 +31,7 @@ export class AppComponent implements OnInit{
     this.fetchProducts();
   }
 
-  fetchProducts(){
+  public fetchProducts(){
     this.loading = true;
 
     this.dataStorageService.fetchProducts()
@@ -43,5 +46,18 @@ export class AppComponent implements OnInit{
           }
         }
       )
+  }
+
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(DialogProductComponent, {
+      width: '450px',
+      height: '650px',
+      data: this.products,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed');
+    });
   }
 }
