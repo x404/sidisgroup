@@ -20,7 +20,7 @@ export class AppComponent implements OnInit{
 
   loading: boolean = true;
 
-  displayedColumns: string[] = ['position', 'name', 'category', 'comment', 'created_at', 'updated_at','expiration_date', 'manufacture_date', 'edit'];
+  displayedColumns: string[] = ['position', 'name', 'category', 'comment','expiration_date', 'manufacture_date', 'created_at', 'updated_at', 'edit'];
 
 
   constructor(

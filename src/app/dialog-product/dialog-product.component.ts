@@ -1,8 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { FormBuilder, FormControl, FormGroup, Validators } from "@angular/forms";
+import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ProductDataForCreation, DataStorageService, Category, Product } from "../services/data-storage.service";
 import { DatePipe } from "@angular/common";
+
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 
 export interface DialogData {
   categories: Category[];
@@ -13,12 +16,30 @@ export enum expirationType {
   non_expirable = 'non_expirable',
 }
 
+export const MY_FORMATS = {
+  parse: {
+    dateInput: 'LL'
+  },
+  display: {
+    dateInput: 'DD.MM.YYYY',
+    monthYearLabel: 'YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'YYYY'
+  }
+};
+
 
 @Component({
   selector: 'app-dialog-product',
   templateUrl: './dialog-product.component.html',
-  styleUrls: ['./dialog-product.component.scss']
+  styleUrls: ['./dialog-product.component.scss'],
+  providers: [
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+  ],
 })
+
+
 export class DialogProductComponent implements OnInit{
   productForm = new FormGroup({
     name: new FormControl('', Validators.required),
