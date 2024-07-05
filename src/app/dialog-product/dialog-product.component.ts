@@ -143,7 +143,7 @@ export class DialogProductComponent implements OnInit{
   }
 
 
-  addField() {
+  addFields() {
     const field = this.fb.group({
       name: ['', Validators.required],
       value: ['', Validators.required],
