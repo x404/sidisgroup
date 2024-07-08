@@ -80,15 +80,10 @@ export class DialogProductComponent implements OnInit{
     return this.productForm.get('fields') as FormArray;
   }
 
-  onSave() {
-    console.log('onSave', this.productForm.get('fields')?.value);
-  }
-
-  onCancel() {
-    console.log('onCancel')
-  }
 
   onSubmit() {
+    console.log('onSubmit', this.productForm.get('fields')?.value);
+
     const {
       category_id: categoryId,
       name,
@@ -129,7 +124,7 @@ export class DialogProductComponent implements OnInit{
           // expiration_date must be more than manufacture_date
           //TODO: update PRODUCTS array
 
-          // this.dialogRef.close();
+          this.dialogRef.close();
         }),
         error: (error) => {
           this.error = error.error.errors[0].detail;
