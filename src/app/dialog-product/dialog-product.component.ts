@@ -105,7 +105,6 @@ export class DialogProductComponent implements OnInit{
     }));
 
 
-    console.log('field=', this.fields.value);
     const product: ProductDataForCreation = {
       ...this.productForm.value,
       category_id: +categoryId, // Get value from form control
@@ -124,7 +123,7 @@ export class DialogProductComponent implements OnInit{
           // expiration_date must be more than manufacture_date
           //TODO: update PRODUCTS array
 
-          this.dialogRef.close();
+          this.dialogRef.close(product);
         }),
         error: (error) => {
           this.error = error.error.errors[0].detail;

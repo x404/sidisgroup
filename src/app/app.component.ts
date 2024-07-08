@@ -1,8 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Category, DataStorageService, Product } from "./services/data-storage.service";
-import { environment } from "../environment/environment";
+import {
+  Category,
+  DataStorageService,
+  ProductWithCategoryObj
+} from "./services/data-storage.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogProductComponent } from "./dialog-product/dialog-product.component";
+import { MatTableDataSource } from "@angular/material/table";
 
 
 @Component({
@@ -13,21 +17,19 @@ import { DialogProductComponent } from "./dialog-product/dialog-product.componen
 export class AppComponent implements OnInit{
   title = 'Products';
 
-  products: Product[] = [];
-  categories: Category[] = [];
-
   error: string = '';
   loading: boolean = true;
 
+  dataSource = new MatTableDataSource<ProductWithCategoryObj>([]);
   displayedColumns: string[] = ['position', 'name', 'category', 'comment', 'expiration_date', 'manufacture_date', 'created_at', 'updated_at', 'fields', 'edit'];
 
   constructor(
-    private dataStorageService: DataStorageService,
+    public dataStorageService: DataStorageService,
     public dialog: MatDialog
-  ) {
-  }
+  ) { }
 
   ngOnInit(): void {
+    // TODO:
     this.fetchProducts();
     this.fetchCategories();
   }
@@ -37,9 +39,10 @@ export class AppComponent implements OnInit{
 
     this.dataStorageService.fetchProducts()
       .subscribe({
-          next: (response: Product[]) => {
-            this.products = response;
-            console.log(response);
+          next: (response: ProductWithCategoryObj[]) => {
+            this.dataStorageService.products = response;
+            this.refreshTable()
+            console.log('response=', response);
             this.loading = false;
           },
           error: (error) => {
@@ -53,16 +56,21 @@ export class AppComponent implements OnInit{
     this.dataStorageService.fetchCategories()
         .subscribe({
             next: (response: Category[]) => {
-              this.categories = response;
-              console.log('this.categories=', this.categories);
+              this.dataStorageService.categories = response;
+              console.log('this.categories=', this.dataStorageService.categories);
               // this.loading = false;
             },
             error: (error) => {
               console.log('error cat', error)
+              // TODO: show errors
               // this.error = error.status === 404 ? `Error: ${error.status}. The requested resource was not found on this server.` : error.message;
             }
           }
         )
+  }
+
+  public refreshTable(){
+    this.dataSource.data = this.dataStorageService.products;
   }
 
 
@@ -70,11 +78,20 @@ export class AppComponent implements OnInit{
     const dialogRef = this.dialog.open(DialogProductComponent, {
       width: '500px',
       height: '650px',
-      data: {categories: this.categories},
+      data: {categories: this.dataStorageService.categories},
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+    dialogRef.afterClosed()
+     .subscribe((product:ProductWithCategoryObj) => {
+       if( product ) {
+         this.addProduct(product);
+       }
     });
   }
+
+  public addProduct(product: ProductWithCategoryObj){
+    this.dataStorageService.products.unshift(product);
+    this.refreshTable();
+  }
+
 }

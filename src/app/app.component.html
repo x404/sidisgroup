@@ -5,9 +5,9 @@
 
   <ng-template #productsBlock>
     <div *ngIf="!loading; else loadingBlock">
-      <div *ngIf="products.length; else noProducts">
+      <div *ngIf="this.dataStorageService.products.length; else noProducts">
 
-        <table mat-table [dataSource]="products" class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
           <!-- Position Column -->
           <ng-container matColumnDef="position">
             <th mat-header-cell *matHeaderCellDef> No. </th>
@@ -83,7 +83,6 @@
               </div>
             </td>
           </ng-container>
-
 
 
           <!-- Edit Date Column -->
