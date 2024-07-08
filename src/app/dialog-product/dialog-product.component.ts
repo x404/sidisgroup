@@ -6,7 +6,7 @@ import {
   DataStorageService,
   Category,
   Product,
-  Fields, ProductWithCategoryObj
+  Fields, ProductWithCategory
 } from "../services/data-storage.service";
 import { DatePipe } from "@angular/common";
 
@@ -14,8 +14,8 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 
 export interface DialogData {
-  categories: Category[];
-  idProduct?: number
+  categories: Category[],
+  editProductId?: number,
 }
 
 export enum expirationType {
@@ -52,7 +52,7 @@ export class DialogProductComponent implements OnInit{
 
   error: string = '';
   categories: Category[] = [];
-  isExpirable = false;
+  isExpirable: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<DialogProductComponent>,
@@ -77,39 +77,40 @@ export class DialogProductComponent implements OnInit{
   ngOnInit(): void {
     this.categories = this.data?.categories;
 
-    const editProduct : ProductWithCategoryObj | undefined = this.dataStorageService.products.find(product => product.id === this.data.idProduct)
-    if ( editProduct !== undefined ) {
-      const {
-        name,
-        comment,
-        expiration_type,
-        expiration_date,
-        fields,
-        manufacture_date,
-        category
-      } = editProduct;
+    if (this.dataStorageService.isEditMode) {
+      this.presetFormControls();
+    }
+  }
 
+  private presetFormControls(): void{
+    const product : ProductWithCategory | undefined = this.dataStorageService.products.find(product => product.id === this.data.editProductId)
+    if ( product !== undefined ) {
+      const {
+        expiration_type,
+        fields,
+        category
+      } = product;
 
       this.isExpirable = expiration_type === expirationType.expirable;
 
-      // console.log( category.id );
+      for (let field of fields) {
+        this.addExtraFields(field);
+      }
+
       this.productForm.patchValue({
-        name,
-        comment,
+        ...product,
         expiration_type: this.isExpirable,
-        expiration_date,
-        manufacture_date,
         category_id:category.id,
       })
     }
   }
 
+
   get fields(): FormArray {
     return this.productForm.get('fields') as FormArray;
   }
 
-
-  onSubmit(): void {
+  public onSubmit(): void {
     console.log('onSubmit', this.productForm.get('fields')?.value);
 
     const {
@@ -144,13 +145,19 @@ export class DialogProductComponent implements OnInit{
       fields
     };
 
-    console.log('product=', product)
-    this.dataStorageService.addProduct(product)
+    // console.log('product=', product)
+    if (this.dataStorageService.isEditMode && this.data.editProductId !== undefined ){
+      this.updateProduct(this.data.editProductId, product);
+    } else {
+      this.addProduct(product);
+    }
+  }
+
+  private updateProduct(id: number, product: ProductDataForCreation): void {
+    this.dataStorageService.updateProduct(id, product)
       .subscribe({
         next: (( product: ProductDataForCreation[]) => {
-          // expiration_date must be more than manufacture_date
-          //TODO: update PRODUCTS array
-
+          // TODO: expiration_date must be more than manufacture_date
           this.dialogRef.close(product);
         }),
         error: (error) => {
@@ -160,22 +167,34 @@ export class DialogProductComponent implements OnInit{
       })
   }
 
-  onToggleExpirationType(): void {
-    this.isExpirable = !!this.productForm.get('expiration_type')?.value;
+  private addProduct(product: ProductDataForCreation): void {
+    this.dataStorageService.addProduct(product)
+      .subscribe({
+        next: (( product: ProductDataForCreation[]) => {
+          // TODO: expiration_date must be more than manufacture_date
+          this.dialogRef.close(product);
+        }),
+        error: (error) => {
+          this.error = error.error.errors[0].detail;
+          console.log(error);
+        }
+      })
   }
 
+  public onToggleExpirationType(): void {
+    this.isExpirable = !!this.productForm.get('expiration_type')?.value || false;
+  }
 
-  addFields(): void {
+  public addExtraFields(data?: Fields): void {
     const field = this.fb.group({
-      name: ['', Validators.required],
-      value: ['', Validators.required],
-      is_date: [false],
+      name: [data?.name || '', Validators.required],
+      value: [data?.value || '', Validators.required],
+      is_date: [data?.is_date || false],
     });
-
     this.fields.push(field);
   }
 
-  removeField(index: number): void {
+  public removeExtraField(index: number): void {
     this.fields.removeAt(index);
   }
 }

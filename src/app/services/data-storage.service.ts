@@ -8,7 +8,7 @@ export interface ProductResponse {
   count: number,
   next: string | null,
   previous: string | null,
-  results: ProductWithCategoryObj[]
+  results: ProductWithCategory[]
 }
 
 export interface Product {
@@ -22,7 +22,7 @@ export interface Product {
   updated_at?: string,
 }
 
-export interface ProductWithCategoryObj extends Product {
+export interface ProductWithCategory extends Product {
   id: number,
   category: Category,
 }
@@ -46,8 +46,9 @@ export interface Fields{
   providedIn: 'root'
 })
 export class DataStorageService {
-  public products: ProductWithCategoryObj[] = [];
+  public products: ProductWithCategory[] = [];
   public categories: Category[] = [];
+  isEditMode: boolean = false;
 
   constructor(
     private http: HttpClient
@@ -55,12 +56,12 @@ export class DataStorageService {
   }
 
 
-  public fetchProducts(): Observable<ProductWithCategoryObj[]> {
+  public fetchProducts(): Observable<ProductWithCategory[]> {
     let params = new HttpParams();
     // params = params.append('limit', '5');
     // params = params.append('offset', '0');
 
-    return this.http.get<ProductWithCategoryObj[] | ProductResponse>(environment.productsUrl, {params})
+    return this.http.get<ProductWithCategory[] | ProductResponse>(environment.productsUrl, {params})
      .pipe(
        mergeMap((response) => {
          return Array.isArray(response)
@@ -79,7 +80,12 @@ export class DataStorageService {
     return this.http.post<ProductDataForCreation[]>(environment.productsUrl, product)
   }
 
-  deleteProductById(id: number) {
-    return this.http.delete(environment.productsUrl + id)
+  public updateProduct(id: number, product: ProductDataForCreation): Observable<ProductDataForCreation[]> {
+    // TODO: add loader
+    return this.http.put<ProductDataForCreation[]>(environment.productsUrl + id, product);
+  }
+
+  public deleteProductById(id: number): Observable<void> {
+    return this.http.delete<void>(environment.productsUrl + id)
   }
 }
