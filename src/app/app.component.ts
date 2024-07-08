@@ -19,7 +19,7 @@ export class AppComponent implements OnInit{
   error: string = '';
   loading: boolean = true;
 
-  displayedColumns: string[] = ['position', 'name', 'category', 'comment', 'expiration_date', 'manufacture_date', 'created_at', 'updated_at', 'edit'];
+  displayedColumns: string[] = ['position', 'name', 'category', 'comment', 'expiration_date', 'manufacture_date', 'created_at', 'updated_at', 'fields', 'edit'];
 
   constructor(
     private dataStorageService: DataStorageService,

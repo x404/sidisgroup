@@ -52,21 +52,6 @@
             </td>
           </ng-container>
 
-
-          <!-- Manufacture Date Column -->
-          <ng-container matColumnDef="edit">
-            <th mat-header-cell *matHeaderCellDef> </th>
-            <td mat-cell *matCellDef="let element">
-              <button
-                mat-icon-button
-                matTooltip="Edit"
-                [attr.aria-label]="'Edit' + element.name"
-              >
-                <mat-icon>edit</mat-icon>
-              </button>
-            </td>
-          </ng-container>
-
           <!-- Created Column -->
           <ng-container matColumnDef="created_at">
             <th mat-header-cell *matHeaderCellDef> Created At </th>
@@ -82,6 +67,50 @@
               {{element.updated_at |  date:'dd.MM.YYYY H:mm '}}
             </td>
           </ng-container>
+
+          <!-- Fields Column -->
+          <ng-container matColumnDef="fields">
+            <th mat-header-cell *matHeaderCellDef> Fields </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="my-2" *ngFor="let field of element.fields">
+                <p class="my-0">Title: {{ field.name }}</p>
+                <p
+                  class="my-0 text-nowrap"
+                  [class.text-nowrap] = "field.is_date"
+                >
+                  Value: {{ field.value }}
+                </p>
+              </div>
+            </td>
+          </ng-container>
+
+
+
+          <!-- Edit Date Column -->
+          <ng-container matColumnDef="edit">
+            <th mat-header-cell *matHeaderCellDef> </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="d-flex">
+                <button
+                  mat-icon-button
+                  matTooltip="Edit"
+                  [attr.aria-label]="'Edit' + element.name"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+
+                <button
+                  mat-icon-button
+                  matTooltip="Remove"
+                  [attr.aria-label]="'Remove' + element.name"
+                  class="d-none"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
 
           <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
