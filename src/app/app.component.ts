@@ -5,7 +5,7 @@ import {
   ProductWithCategoryObj
 } from "./services/data-storage.service";
 import { MatDialog } from "@angular/material/dialog";
-import { DialogProductComponent } from "./dialog-product/dialog-product.component";
+import { DialogData, DialogProductComponent } from "./dialog-product/dialog-product.component";
 import { MatTableDataSource } from "@angular/material/table";
 
 @Component({
@@ -33,7 +33,7 @@ export class AppComponent implements OnInit{
     this.fetchCategories();
   }
 
-  public fetchProducts(){
+  public fetchProducts(): void{
     this.loading = true;
 
     this.dataStorageService.fetchProducts()
@@ -51,7 +51,7 @@ export class AppComponent implements OnInit{
       )
   }
 
-  public fetchCategories(){
+  public fetchCategories(): void{
     this.dataStorageService.fetchCategories()
         .subscribe({
             next: (response: Category[]) => {
@@ -68,16 +68,21 @@ export class AppComponent implements OnInit{
         )
   }
 
-  public refreshTable(){
+  public refreshTable(): void{
     this.dataSource.data = this.dataStorageService.products;
   }
 
 
-  openDialog(): void {
+  openDialog(id?: number): void {
+    const data : DialogData = {categories: this.dataStorageService.categories}
+    if (id) {
+      data['idProduct'] = id;
+    }
+
     const dialogRef = this.dialog.open(DialogProductComponent, {
       width: '500px',
       height: '650px',
-      data: {categories: this.dataStorageService.categories},
+      data,
     });
 
     dialogRef.afterClosed()
@@ -89,11 +94,11 @@ export class AppComponent implements OnInit{
     });
   }
 
-  public addProduct(product: ProductWithCategoryObj){
+  public addProduct(product: ProductWithCategoryObj): void{
     this.dataStorageService.products.unshift(product);
   }
 
-  public onDeleteProduct(id: number) {
+  public onDeleteProduct(id: number): void {
    this.dataStorageService.deleteProductById(id).subscribe({
      next: () => {
        this.deleteProduct(id);
@@ -105,7 +110,11 @@ export class AppComponent implements OnInit{
    })
   }
 
-  private deleteProduct(id: number) {
+  private deleteProduct(id: number): void {
     this.dataStorageService.products = this.dataStorageService.products.filter(product => product.id !== id);
+  }
+
+  public onEditProduct(id: number): void {
+    this.openDialog(id)
   }
 }

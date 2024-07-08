@@ -6,7 +6,7 @@ import {
   DataStorageService,
   Category,
   Product,
-  Fields
+  Fields, ProductWithCategoryObj
 } from "../services/data-storage.service";
 import { DatePipe } from "@angular/common";
 
@@ -15,6 +15,7 @@ import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/materia
 
 export interface DialogData {
   categories: Category[];
+  idProduct?: number
 }
 
 export enum expirationType {
@@ -55,7 +56,8 @@ export class DialogProductComponent implements OnInit{
 
   constructor(
     public dialogRef: MatDialogRef<DialogProductComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: DialogData,
+    @Inject(MAT_DIALOG_DATA)
+      public data: DialogData,
 
     public dataStorageService: DataStorageService,
     private datePipe: DatePipe,
@@ -74,6 +76,32 @@ export class DialogProductComponent implements OnInit{
 
   ngOnInit(): void {
     this.categories = this.data?.categories;
+
+    const editProduct : ProductWithCategoryObj | undefined = this.dataStorageService.products.find(product => product.id === this.data.idProduct)
+    if ( editProduct !== undefined ) {
+      const {
+        name,
+        comment,
+        expiration_type,
+        expiration_date,
+        fields,
+        manufacture_date,
+        category
+      } = editProduct;
+
+
+      this.isExpirable = expiration_type === expirationType.expirable;
+
+      // console.log( category.id );
+      this.productForm.patchValue({
+        name,
+        comment,
+        expiration_type: this.isExpirable,
+        expiration_date,
+        manufacture_date,
+        category_id:category.id,
+      })
+    }
   }
 
   get fields(): FormArray {
@@ -81,7 +109,7 @@ export class DialogProductComponent implements OnInit{
   }
 
 
-  onSubmit() {
+  onSubmit(): void {
     console.log('onSubmit', this.productForm.get('fields')?.value);
 
     const {
@@ -132,12 +160,12 @@ export class DialogProductComponent implements OnInit{
       })
   }
 
-  onToggleExpirationType() {
+  onToggleExpirationType(): void {
     this.isExpirable = !!this.productForm.get('expiration_type')?.value;
   }
 
 
-  addFields() {
+  addFields(): void {
     const field = this.fb.group({
       name: ['', Validators.required],
       value: ['', Validators.required],
@@ -147,7 +175,7 @@ export class DialogProductComponent implements OnInit{
     this.fields.push(field);
   }
 
-  removeField(index: number) {
+  removeField(index: number): void {
     this.fields.removeAt(index);
   }
 }

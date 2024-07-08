@@ -94,6 +94,7 @@
                   mat-icon-button
                   matTooltip="Edit"
                   [attr.aria-label]="'Edit' + element.name"
+                  (click)="onEditProduct(element.id)"
                 >
                   <mat-icon>edit</mat-icon>
                 </button>
