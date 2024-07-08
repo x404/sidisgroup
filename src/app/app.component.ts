@@ -8,7 +8,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { DialogProductComponent } from "./dialog-product/dialog-product.component";
 import { MatTableDataSource } from "@angular/material/table";
 
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -85,13 +84,28 @@ export class AppComponent implements OnInit{
      .subscribe((product:ProductWithCategoryObj) => {
        if( product ) {
          this.addProduct(product);
+         this.refreshTable();
        }
     });
   }
 
   public addProduct(product: ProductWithCategoryObj){
     this.dataStorageService.products.unshift(product);
-    this.refreshTable();
   }
 
+  public onDeleteProduct(id: number) {
+   this.dataStorageService.deleteProductById(id).subscribe({
+     next: () => {
+       this.deleteProduct(id);
+       this.refreshTable();
+     },
+     error: (error) => {
+       console.log('There was a deleting error!', error)
+     }
+   })
+  }
+
+  private deleteProduct(id: number) {
+    this.dataStorageService.products = this.dataStorageService.products.filter(product => product.id !== id);
+  }
 }

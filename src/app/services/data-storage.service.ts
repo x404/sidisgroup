@@ -46,25 +46,12 @@ export interface Fields{
   providedIn: 'root'
 })
 export class DataStorageService {
-
-  // public products = new MatTableDataSource<Product>();
   public products: ProductWithCategoryObj[] = [];
   public categories: Category[] = [];
-
-  dataSource = new MatTableDataSource<ProductWithCategoryObj>([]);
 
   constructor(
     private http: HttpClient
   ) {
-
-    // products = new MatTableDataSource<Product>();
-    // categories: Category[] = [];
-  }
-
-
-
-  doSomething(): Observable<Product[]> {
-    return of ();
   }
 
 
@@ -90,5 +77,9 @@ export class DataStorageService {
   public addProduct(product: ProductDataForCreation): Observable<ProductDataForCreation[]> {
     // TODO: add loader
     return this.http.post<ProductDataForCreation[]>(environment.productsUrl, product)
+  }
+
+  deleteProductById(id: number) {
+    return this.http.delete(environment.productsUrl + id)
   }
 }
