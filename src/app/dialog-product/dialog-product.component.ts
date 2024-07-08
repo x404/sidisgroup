@@ -5,8 +5,8 @@ import {
   ProductDataForCreation,
   DataStorageService,
   Category,
-  Product,
-  Fields, ProductWithCategory
+  Fields,
+  ProductWithCategory
 } from "../services/data-storage.service";
 import { DatePipe } from "@angular/common";
 
@@ -47,7 +47,7 @@ export const MY_FORMATS = {
 })
 
 
-export class DialogProductComponent implements OnInit{
+export class DialogProductComponent implements OnInit {
   productForm: FormGroup;
 
   error: string = '';
@@ -57,8 +57,7 @@ export class DialogProductComponent implements OnInit{
   constructor(
     public dialogRef: MatDialogRef<DialogProductComponent>,
     @Inject(MAT_DIALOG_DATA)
-      public data: DialogData,
-
+    public data: DialogData,
     public dataStorageService: DataStorageService,
     private datePipe: DatePipe,
     private fb: FormBuilder
@@ -82,9 +81,9 @@ export class DialogProductComponent implements OnInit{
     }
   }
 
-  private presetFormControls(): void{
-    const product : ProductWithCategory | undefined = this.dataStorageService.products.find(product => product.id === this.data.editProductId)
-    if ( product !== undefined ) {
+  private presetFormControls(): void {
+    const product: ProductWithCategory | undefined = this.dataStorageService.products.find(product => product.id === this.data.editProductId)
+    if (product !== undefined) {
       const {
         expiration_type,
         fields,
@@ -100,7 +99,7 @@ export class DialogProductComponent implements OnInit{
       this.productForm.patchValue({
         ...product,
         expiration_type: this.isExpirable,
-        category_id:category.id,
+        category_id: category.id,
       })
     }
   }
@@ -116,12 +115,12 @@ export class DialogProductComponent implements OnInit{
     const {
       category_id: categoryId,
       name,
-      comment ,
+      comment,
       expiration_date,
       manufacture_date,
     } = this.productForm.value;
 
-    const expirationDate: string | null = this.isExpirable ? String(this.datePipe.transform(expiration_date, 'yyyy-MM-dd')): null;
+    const expirationDate: string | null = this.isExpirable ? String(this.datePipe.transform(expiration_date, 'yyyy-MM-dd')) : null;
     const manufactureDate = String(this.datePipe.transform(manufacture_date, 'yyyy-MM-dd'));
 
     if (!categoryId || !name || !comment) {
@@ -145,8 +144,7 @@ export class DialogProductComponent implements OnInit{
       fields
     };
 
-    // console.log('product=', product)
-    if (this.dataStorageService.isEditMode && this.data.editProductId !== undefined ){
+    if (this.dataStorageService.isEditMode && this.data.editProductId !== undefined) {
       this.updateProduct(this.data.editProductId, product);
     } else {
       this.addProduct(product);
@@ -155,30 +153,30 @@ export class DialogProductComponent implements OnInit{
 
   private updateProduct(id: number, product: ProductDataForCreation): void {
     this.dataStorageService.updateProduct(id, product)
-      .subscribe({
-        next: (( product: ProductDataForCreation[]) => {
-          // TODO: expiration_date must be more than manufacture_date
-          this.dialogRef.close(product);
-        }),
-        error: (error) => {
-          this.error = error.error.errors[0].detail;
-          console.log(error);
-        }
-      })
+        .subscribe({
+          next: ((product: ProductDataForCreation[]) => {
+            // TODO: expiration_date must be more than manufacture_date
+            this.dialogRef.close(product);
+          }),
+          error: (error) => {
+            this.error = error.error.errors[0].detail;
+            console.log(error);
+          }
+        })
   }
 
   private addProduct(product: ProductDataForCreation): void {
     this.dataStorageService.addProduct(product)
-      .subscribe({
-        next: (( product: ProductDataForCreation[]) => {
-          // TODO: expiration_date must be more than manufacture_date
-          this.dialogRef.close(product);
-        }),
-        error: (error) => {
-          this.error = error.error.errors[0].detail;
-          console.log(error);
-        }
-      })
+        .subscribe({
+          next: ((product: ProductDataForCreation[]) => {
+            // TODO: expiration_date must be more than manufacture_date
+            this.dialogRef.close(product);
+          }),
+          error: (error) => {
+            this.error = error.error.errors[0].detail;
+            console.log(error);
+          }
+        })
   }
 
   public onToggleExpirationType(): void {

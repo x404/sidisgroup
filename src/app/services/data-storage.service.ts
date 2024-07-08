@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { catchError, mergeMap, Observable, of, switchMap, tap, throwError } from "rxjs";
+import { mergeMap, Observable, of } from "rxjs";
 import { environment } from "../../environment/environment";
-import { MatTableDataSource } from "@angular/material/table";
 
 export interface ProductResponse {
   count: number,

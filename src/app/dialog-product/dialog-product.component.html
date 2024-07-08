@@ -86,51 +86,65 @@
 
         <!-- =extra fields -->
         <mat-card class="my-2">
-            <mat-card-header>
-              <mat-card-title>Field #{{i + 1}}</mat-card-title>
-            </mat-card-header>
+          <mat-card-header>
+            <mat-card-title>Field #{{ i + 1 }}</mat-card-title>
+          </mat-card-header>
 
-            <mat-card-content>
-              <mat-form-field appearance="fill" class="my-1">
-                <mat-label>Name</mat-label>
-                <input matInput formControlName="name">
-              </mat-form-field>
+          <mat-card-content>
+            <mat-form-field appearance="fill" class="my-1">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name">
+            </mat-form-field>
 
-              <div class="d-flex">
-                <mat-checkbox formControlName="is_date" class="mb-3 me-3 mt-3 flex-shrink-0">Is Date</mat-checkbox>
+            <div class="d-flex">
+              <mat-checkbox formControlName="is_date" class="mb-3 me-3 mt-3 flex-shrink-0">Is Date</mat-checkbox>
 
-                <ng-container *ngIf="!field.get('is_date')?.value; else datePicker">
-                  <mat-form-field appearance="fill" class="my-1">
-                    <mat-label>Value</mat-label>
-                    <input matInput formControlName="value">
-                  </mat-form-field>
-                </ng-container>
-                <ng-template #datePicker>
-                  <mat-form-field appearance="fill" class="my-1">
-                    <mat-label>Value</mat-label>
-                    <input matInput [matDatepicker]="fieldDatePicker" formControlName="value">
-                    <mat-datepicker-toggle matIconSuffix [for]="fieldDatePicker"></mat-datepicker-toggle>
-                    <mat-datepicker #fieldDatePicker></mat-datepicker>
-                  </mat-form-field>
-                </ng-template>
-              </div>
-            </mat-card-content>
+              <ng-container *ngIf="!field.get('is_date')?.value; else datePicker">
+                <mat-form-field appearance="fill" class="my-1">
+                  <mat-label>Value</mat-label>
+                  <input matInput formControlName="value">
+                </mat-form-field>
+              </ng-container>
+              <ng-template #datePicker>
+                <mat-form-field appearance="fill" class="my-1">
+                  <mat-label>Value</mat-label>
+                  <input matInput [matDatepicker]="fieldDatePicker" formControlName="value">
+                  <mat-datepicker-toggle matIconSuffix [for]="fieldDatePicker"></mat-datepicker-toggle>
+                  <mat-datepicker #fieldDatePicker></mat-datepicker>
+                </mat-form-field>
+              </ng-template>
+            </div>
+          </mat-card-content>
 
-            <mat-card-actions>
-              <div class="d-flex ms-auto">
-                <button  mat-raised-button color="warn" (click)="removeExtraField(i)">Remove Field</button>
-              </div>
-            </mat-card-actions>
+          <mat-card-actions>
+            <div class="d-flex ms-auto">
+              <button
+                mat-raised-button
+                color="warn"
+                (click)="removeExtraField(i)"
+                type="button"
+              >
+                Remove Field
+              </button>
+            </div>
+          </mat-card-actions>
           <div class="d-flex">
           </div>
         </mat-card>
       </div>
-      <button mat-raised-button color="primary" (click)="addExtraFields()">+ Add fields</button>
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="addExtraFields()"
+        type="button"
+      >
+        + Add fields
+      </button>
     </div>
 
   </div>
   <div mat-dialog-actions>
-    <button mat-button color="primary" cdkFocusInitial>Save</button>
+    <button mat-button color="primary" cdkFocusInitial [disabled]="isSaving">{{isSaving ? 'Saving..' : 'Save'}}</button>
     <button mat-button matDialogClose="">Cancel</button>
   </div>
 </form>

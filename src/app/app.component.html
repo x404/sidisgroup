@@ -1,10 +1,10 @@
 <div class="container">
   <h1>Products</h1>
 
-  <div class="error" *ngIf="error; else productsBlock">{{error}}</div>
+  <div class="error" *ngIf="productError; else productsBlock">{{productError}}</div>
 
   <ng-template #productsBlock>
-    <div *ngIf="!loading; else loadingBlock">
+    <div *ngIf="!productsLoading; else loadingBlock">
       <div *ngIf="this.dataStorageService.products.length; else noProducts">
 
         <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
