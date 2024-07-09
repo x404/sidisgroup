@@ -7,7 +7,7 @@
     <div *ngIf="!productsLoading; else loadingBlock">
       <div *ngIf="this.dataStorageService.products.length; else noProducts">
 
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataStorageService.dataSource" class="mat-elevation-z8">
           <!-- Position Column -->
           <ng-container matColumnDef="position">
             <th mat-header-cell *matHeaderCellDef> No. </th>

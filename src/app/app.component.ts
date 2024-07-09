@@ -22,7 +22,6 @@ export class AppComponent implements OnInit {
   productsLoading: boolean = true;
   categoriesLoading: boolean = true;
 
-  dataSource = new MatTableDataSource<ProductWithCategory>([]);
   displayedColumns: string[] = ['position', 'name', 'category', 'comment', 'expiration_date', 'manufacture_date', 'created_at', 'updated_at', 'fields', 'edit'];
 
   constructor(
@@ -42,8 +41,9 @@ export class AppComponent implements OnInit {
     this.dataStorageService.fetchProducts()
         .subscribe({
             next: (response: ProductWithCategory[]) => {
+              console.log(response);
               this.dataStorageService.products = response;
-              this.refreshTable()
+              this.dataStorageService.refreshTable();
               this.productsLoading = false;
             },
             error: (error) => {
@@ -68,9 +68,6 @@ export class AppComponent implements OnInit {
         )
   }
 
-  public refreshTable(): void {
-    this.dataSource.data = this.dataStorageService.products;
-  }
 
 
   openDialog(productId?: number): void {
@@ -84,19 +81,17 @@ export class AppComponent implements OnInit {
       height: '650px',
       data,
     });
-
-    dialogRef.afterClosed()
-             .subscribe((product: (ProductWithCategory)) => {
-               if (product) {
-                 if (this.dataStorageService.isEditMode && productId !== undefined) {
-                   this.updateProduct(productId, product);
-                   this.resetEditMode();
-                 } else {
-                   this.addProduct(product);
-                 }
-                 this.refreshTable();
-               }
-             });
+    //
+    // dialogRef.afterClosed()
+    //          .subscribe((product: (ProductWithCategory)) => {
+    //            this.dataStorageService.refreshTable();
+    //            if (product) {
+    //              if (this.dataStorageService.isEditMode && productId !== undefined) {
+    //                // this.updateProductInStore(productId, product);
+    //                // this.dataStorageService.resetEditMode();
+    //              }
+    //            }
+    //          });
   }
 
   public onEditProduct(id: number): void {
@@ -104,24 +99,16 @@ export class AppComponent implements OnInit {
     this.openDialog(id);
   }
 
-  private resetEditMode() {
-    this.dataStorageService.isEditMode = false;
-  }
-
-  private addProduct(product: ProductWithCategory): void {
-    this.dataStorageService.products.unshift(product);
-  }
-
-  private updateProduct(id: number, newProductData: ProductWithCategory): void {
-    let idx = this.dataStorageService.products.findIndex((product) => product.id === id);
-    this.dataStorageService.products[idx] = newProductData;
-  }
+  // private updateProductInStore(id: number, newProductData: ProductWithCategory): void {
+  //   let idx = this.dataStorageService.products.findIndex((product) => product.id === id);
+  //   this.dataStorageService.products[idx] = newProductData;
+  // }
 
   public onDeleteProduct(id: number): void {
     this.dataStorageService.deleteProductById(id).subscribe({
       next: () => {
-        this.deleteProduct(id);
-        this.refreshTable();
+        this.deleteProductFromStore(id);
+        this.dataStorageService.refreshTable();
       },
       error: (error) => {
         console.log('There was a deleting error!', error)
@@ -129,7 +116,7 @@ export class AppComponent implements OnInit {
     })
   }
 
-  private deleteProduct(id: number): void {
+  private deleteProductFromStore(id: number): void {
     this.dataStorageService.products = this.dataStorageService.products.filter(product => product.id !== id);
   }
 }
