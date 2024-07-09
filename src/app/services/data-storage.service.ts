@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { mergeMap, Observable, of } from "rxjs";
+import { MatTableDataSource } from "@angular/material/table";
 import { environment } from "../../environment/environment";
+import { MockupService } from "./mockup.service";
 
 export interface ProductResponse {
   count: number,
@@ -49,13 +51,19 @@ export class DataStorageService {
   public categories: Category[] = [];
   isEditMode: boolean = false;
 
+  dataSource = new MatTableDataSource<ProductWithCategory>([]);
+
+
   constructor(
-    private http: HttpClient
-  ) {
-  }
+    private http: HttpClient,
+    public mockupService: MockupService
+  ) {}
 
 
   public fetchProducts(): Observable<ProductWithCategory[]> {
+    if (environment.isDevMode){
+      return of(this.mockupService.products as any);
+    }
     let params = new HttpParams();
     // params = params.append('limit', '5');
     // params = params.append('offset', '0');
@@ -71,20 +79,31 @@ export class DataStorageService {
   }
 
   public fetchCategories(): Observable<Category[]> {
+    if (environment.isDevMode) {
+      return of(this.mockupService.categories as any);
+    }
     return this.http.get<Category[]>(environment.categoryUrl)
   }
 
-  public addProduct(product: ProductDataForCreation): Observable<ProductDataForCreation[]> {
-    // TODO: add loader
-    return this.http.post<ProductDataForCreation[]>(environment.productsUrl, product)
+  public addProduct(product: ProductDataForCreation): Observable<ProductWithCategory> {
+    return this.http.post<ProductWithCategory>(environment.productsUrl, product)
   }
 
-  public updateProduct(id: number, product: ProductDataForCreation): Observable<ProductDataForCreation[]> {
+  public updateProduct(id: number, product: ProductDataForCreation): Observable<ProductWithCategory> {
     // TODO: add loader
-    return this.http.put<ProductDataForCreation[]>(environment.productsUrl + id, product);
+    return this.http.put<ProductWithCategory>(environment.productsUrl + id, product);
   }
 
   public deleteProductById(id: number): Observable<void> {
     return this.http.delete<void>(environment.productsUrl + id)
   }
+
+  public refreshTable(): void {
+    this.dataSource.data = this.products;
+  }
+
+  public resetEditMode() {
+    this.isEditMode = false;
+  }
+
 }

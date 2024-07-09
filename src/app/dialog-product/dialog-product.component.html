@@ -144,7 +144,9 @@
 
   </div>
   <div mat-dialog-actions>
-    <button mat-button color="primary" cdkFocusInitial [disabled]="isSaving">{{isSaving ? 'Saving..' : 'Save'}}</button>
+    <button mat-button color="primary" cdkFocusInitial [disabled]="isSaving">
+      {{isSaving ? 'Saving.. ' : 'Save'}}
+    </button>
     <button mat-button matDialogClose="">Cancel</button>
   </div>
 </form>

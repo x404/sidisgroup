@@ -49,10 +49,10 @@ export const MY_FORMATS = {
 
 export class DialogProductComponent implements OnInit {
   productForm: FormGroup;
-
   error: string = '';
   categories: Category[] = [];
   isExpirable: boolean = false;
+  isSaving: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<DialogProductComponent>,
@@ -104,14 +104,11 @@ export class DialogProductComponent implements OnInit {
     }
   }
 
-
   get fields(): FormArray {
     return this.productForm.get('fields') as FormArray;
   }
 
   public onSubmit(): void {
-    console.log('onSubmit', this.productForm.get('fields')?.value);
-
     const {
       category_id: categoryId,
       name,
@@ -126,6 +123,9 @@ export class DialogProductComponent implements OnInit {
     if (!categoryId || !name || !comment) {
       return;
     }
+
+    console.log('onSubmit', this.productForm.value);
+    this.isSaving = true;
 
     const fields = this.fields.value.map((field: Fields) => ({
       ...field,
@@ -145,18 +145,26 @@ export class DialogProductComponent implements OnInit {
     };
 
     if (this.dataStorageService.isEditMode && this.data.editProductId !== undefined) {
+      this.dataStorageService.resetEditMode();
+      console.log('before product', this.data.editProductId, product);
       this.updateProduct(this.data.editProductId, product);
     } else {
       this.addProduct(product);
     }
+    this.dataStorageService.refreshTable();
   }
+
 
   private updateProduct(id: number, product: ProductDataForCreation): void {
     this.dataStorageService.updateProduct(id, product)
         .subscribe({
-          next: ((product: ProductDataForCreation[]) => {
+          next: ((response: ProductWithCategory) => {
             // TODO: expiration_date must be more than manufacture_date
-            this.dialogRef.close(product);
+            // this.updateProductInStore(id, response);
+            console.log('updateProduct', product, response);
+            this.updateProductInStore(id, response);
+            this.isSaving = false;
+            this.dialogRef.close(response);
           }),
           error: (error) => {
             this.error = error.error.errors[0].detail;
@@ -165,18 +173,35 @@ export class DialogProductComponent implements OnInit {
         })
   }
 
+  private updateProductInStore(id: number, newProductData: ProductWithCategory): void {
+    let idx = this.dataStorageService.products.findIndex((product) => product.id === id);
+    this.dataStorageService.products[idx] = newProductData;
+    console.log('idx', this.dataStorageService.products);
+  }
+
   private addProduct(product: ProductDataForCreation): void {
     this.dataStorageService.addProduct(product)
-        .subscribe({
-          next: ((product: ProductDataForCreation[]) => {
-            // TODO: expiration_date must be more than manufacture_date
-            this.dialogRef.close(product);
-          }),
-          error: (error) => {
-            this.error = error.error.errors[0].detail;
-            console.log(error);
+        .subscribe(
+          {
+            next: ((resp: ProductWithCategory) => {
+              // TODO: expiration_date must be more than manufacture_date
+              this.isSaving = false;
+              console.log('submitt', resp);
+              this.addProductInStore(resp);
+
+              this.dialogRef.close(resp);
+            }),
+            error: (error) => {
+              this.error = error.error.errors[0].detail;
+              console.log(error);
+            }
           }
-        })
+        )
+  }
+
+  private addProductInStore(product: ProductWithCategory): void {
+    this.dataStorageService.products.unshift(product);
+    console.log('addProductInStore');
   }
 
   public onToggleExpirationType(): void {
