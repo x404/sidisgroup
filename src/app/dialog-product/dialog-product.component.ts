@@ -131,7 +131,7 @@ export class DialogProductComponent implements OnInit {
     const expirationDate: string | null = this.isExpirable ? String(this.datePipe.transform(expiration_date, 'yyyy-MM-dd')) : null;
     const manufactureDate = String(this.datePipe.transform(manufacture_date, 'yyyy-MM-dd'));
 
-    if (!categoryId || !name || !comment) {
+    if (!categoryId || !name || !comment || !this.validateFields(this.fields.value)) {
       return;
     }
 
@@ -172,6 +172,13 @@ export class DialogProductComponent implements OnInit {
 
     this.dataStorageService.refreshTable();
   }
+
+  private validateFields(fields: Fields[]): boolean {
+    return fields.every(field => {
+      return field.name && field.value;
+    });
+  }
+
 
   private updateProduct(id: number, product: ProductDataForCreation): void {
     this.dataStorageService.updateProduct(id, product)
