@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {
   Category,
-  DataStorageService, ProductDataForCreation,
+  DataStorageService,
   ProductWithCategory
 } from "./services/data-storage.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogData, DialogProductComponent } from "./dialog-product/dialog-product.component";
-import { MatTableDataSource } from "@angular/material/table";
 import { environment } from "../environment/environment";
 
 @Component({
@@ -69,7 +68,10 @@ export class AppComponent implements OnInit {
         )
   }
 
-
+  onAddProduct(){
+    this.dataStorageService.resetEditMode();
+    this.openDialog();
+  }
 
   openDialog(productId?: number): void {
     const data: DialogData = { categories: this.dataStorageService.categories }
@@ -79,17 +81,18 @@ export class AppComponent implements OnInit {
 
     const dialogRef = this.dialog.open(DialogProductComponent, {
       width: '500px',
-      height: '650px',
+      maxHeight: '80vh',
       data,
     });
     //
     // dialogRef.afterClosed()
     //          .subscribe((product: (ProductWithCategory)) => {
-    //            this.dataStorageService.refreshTable();
+    //            // this.dataStorageService.refreshTable();
+    //            console.log(productId)
     //            if (product) {
     //              if (this.dataStorageService.isEditMode && productId !== undefined) {
     //                // this.updateProductInStore(productId, product);
-    //                // this.dataStorageService.resetEditMode();
+    //                this.dataStorageService.resetEditMode();
     //              }
     //            }
     //          });

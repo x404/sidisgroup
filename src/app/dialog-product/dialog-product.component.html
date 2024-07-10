@@ -1,10 +1,19 @@
-<h1 mat-dialog-title>Add product</h1>
+<h1 mat-dialog-title>
+  <ng-container *ngIf="!dataStorageService.isEditMode; else editTitle">Add product</ng-container>
+</h1>
+<ng-template #editTitle>
+  Edit product
+  <span class="small">
+    (id: <strong>{{ this.data.editProductId }}</strong>)
+  </span>
+</ng-template>
 
 <form
   [formGroup]="productForm"
   (ngSubmit)="onSubmit()"
 >
   <div mat-dialog-content>
+
     <mat-form-field
       appearance="fill"
       class="my-1"
@@ -147,6 +156,6 @@
     <button mat-button color="primary" cdkFocusInitial [disabled]="isSaving">
       {{isSaving ? 'Saving.. ' : 'Save'}}
     </button>
-    <button mat-button matDialogClose="">Cancel</button>
+    <button mat-button matDialogClose="" (click)="onCancel()">Cancel</button>
   </div>
 </form>

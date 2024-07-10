@@ -86,6 +86,7 @@ export class DialogProductComponent implements OnInit {
     const product: ProductWithCategory | undefined = this.dataStorageService.products.find(product => product.id === this.data.editProductId)
     if (product !== undefined) {
       const {
+        id,
         expiration_type,
         fields,
         category
@@ -188,7 +189,13 @@ export class DialogProductComponent implements OnInit {
   }
 
   private fakeUpdateProduct(id: number, product: ProductDataForCreation): void {
-    const productWithCategory: ProductWithCategory = this.productAdapter(product);
+    console.log(product);
+    const productWithCategory: ProductWithCategory | undefined = this.productAdapterForEditMode(product);
+
+    if (!productWithCategory) {
+      return;
+    }
+
     this.updateProductInStore(id, productWithCategory);
     this.isSaving = false;
     this.dialogRef.close(productWithCategory);
@@ -231,7 +238,7 @@ export class DialogProductComponent implements OnInit {
   }
 
 
-  private productAdapter(product: ProductDataForCreation): ProductWithCategory {
+  private productAdapter( product: ProductDataForCreation): ProductWithCategory {
     const { category_id, ...rest } = product;
     const category: Category = this.dataStorageService.getCategoryById(category_id);
     const date = new Date().toISOString();
@@ -246,11 +253,38 @@ export class DialogProductComponent implements OnInit {
     };
   }
 
+  private productAdapterForEditMode(product: ProductDataForCreation): ProductWithCategory | undefined {
+    const productInStore = this.dataStorageService.products.find((product) => product.id === this.data.editProductId);
+
+    if (!productInStore) {
+      console.error(`Product with ID ${this.data.editProductId} not found for update`);
+      return;
+    }
+
+    console.log(productInStore)
+
+    const { category_id, ...rest } = product;
+    const category: Category = this.dataStorageService.getCategoryById(category_id);
+    const date = new Date().toISOString();
+
+    return {
+      ...rest,
+      id: productInStore.id,
+      created_at: productInStore.created_at,
+      updated_at: date,
+      category,
+    };
+  }
+
   public onToggleExpirationType(): void {
     this.isExpirable = !!this.productForm.get('expiration_type')?.value;
   }
 
   public removeExtraField(index: number): void {
     this.fields.removeAt(index);
+  }
+
+  onCancel() {
+    // this.dataStorageService.resetEditMode();
   }
 }
