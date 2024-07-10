@@ -106,4 +106,17 @@ export class DataStorageService {
     this.isEditMode = false;
   }
 
+
+  public getCategoryById(id: number): Category {
+    const category =  this.categories?.find(category => category.id === id);
+    if (!category) {
+      throw new Error(`Category with ID ${id} not found`);
+    }
+    return category;
+  }
+
+  public findMaxProductId(){
+    return Math.max(...this.products.map(p => p.id))
+  }
+
 }

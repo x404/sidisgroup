@@ -1,17 +1,18 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { FormBuilder, FormArray, Validators, FormGroup } from "@angular/forms";
+import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import {
-  ProductDataForCreation,
-  DataStorageService,
   Category,
+  DataStorageService,
   Fields,
+  ProductDataForCreation,
   ProductWithCategory
 } from "../services/data-storage.service";
 import { DatePipe } from "@angular/common";
 
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { environment } from "../../environment/environment";
 
 export interface DialogData {
   categories: Category[],
@@ -146,22 +147,44 @@ export class DialogProductComponent implements OnInit {
 
     if (this.dataStorageService.isEditMode && this.data.editProductId !== undefined) {
       this.dataStorageService.resetEditMode();
-      console.log('before product', this.data.editProductId, product);
       this.updateProduct(this.data.editProductId, product);
     } else {
-      this.addProduct(product);
+      if (!environment.isDevMode) {
+        this.addProduct(product);
+      } else {
+        this.fakeAddProduct(product);
+      }
     }
+
     this.dataStorageService.refreshTable();
   }
 
+  private fakeAddProduct(product: ProductDataForCreation): void {
+    const productWithCategory: ProductWithCategory = this.productAdapter(product);
+    this.addProductInStore(productWithCategory);
+    this.isSaving = false;
+    this.dialogRef.close(productWithCategory);
+  }
+
+  private productAdapter(product: ProductDataForCreation): ProductWithCategory {
+    const { category_id, ...rest } = product;
+    const category: Category = this.dataStorageService.getCategoryById(category_id);
+    const date = new Date().toISOString();
+    const maxProductId = this.dataStorageService.findMaxProductId();
+
+    return {
+      ...rest,
+      id: maxProductId + 1,
+      created_at: date,
+      updated_at: date,
+      category,
+    };
+  }
 
   private updateProduct(id: number, product: ProductDataForCreation): void {
     this.dataStorageService.updateProduct(id, product)
         .subscribe({
           next: ((response: ProductWithCategory) => {
-            // TODO: expiration_date must be more than manufacture_date
-            // this.updateProductInStore(id, response);
-            console.log('updateProduct', product, response);
             this.updateProductInStore(id, response);
             this.isSaving = false;
             this.dialogRef.close(response);
