@@ -7,6 +7,7 @@ import {
 import { MatDialog } from "@angular/material/dialog";
 import { DialogData, DialogProductComponent } from "./dialog-product/dialog-product.component";
 import { MatTableDataSource } from "@angular/material/table";
+import { environment } from "../environment/environment";
 
 @Component({
   selector: 'app-root',
@@ -105,15 +106,28 @@ export class AppComponent implements OnInit {
   // }
 
   public onDeleteProduct(id: number): void {
+    if (!environment.isDevMode){
+      this.deleteProductById(id);
+    } else {
+      this.fakeDeleteProductById(id);
+    }
+  }
+
+  private deleteProductById(id: number){
     this.dataStorageService.deleteProductById(id).subscribe({
       next: () => {
         this.deleteProductFromStore(id);
         this.dataStorageService.refreshTable();
       },
       error: (error) => {
-        console.log('There was a deleting error!', error)
+        console.log('Deleting error!', error)
       }
     })
+  }
+
+  private fakeDeleteProductById(id: number): void {
+    this.deleteProductFromStore(id);
+    this.dataStorageService.refreshTable();
   }
 
   private deleteProductFromStore(id: number): void {
