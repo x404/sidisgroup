@@ -105,6 +105,15 @@ export class DialogProductComponent implements OnInit {
     }
   }
 
+  public addExtraFields(data?: Fields): void {
+    const field = this.fb.group({
+      name: [data?.name || '', Validators.required],
+      value: [data?.value || '', Validators.required],
+      is_date: [data?.is_date || false],
+    });
+    this.fields.push(field);
+  }
+
   get fields(): FormArray {
     return this.productForm.get('fields') as FormArray;
   }
@@ -147,7 +156,11 @@ export class DialogProductComponent implements OnInit {
 
     if (this.dataStorageService.isEditMode && this.data.editProductId !== undefined) {
       this.dataStorageService.resetEditMode();
-      this.updateProduct(this.data.editProductId, product);
+      if (!environment.isDevMode) {
+        this.updateProduct(this.data.editProductId, product);
+      } else {
+        this.fakeUpdateProduct(this.data.editProductId, product);
+      }
     } else {
       if (!environment.isDevMode) {
         this.addProduct(product);
@@ -157,28 +170,6 @@ export class DialogProductComponent implements OnInit {
     }
 
     this.dataStorageService.refreshTable();
-  }
-
-  private fakeAddProduct(product: ProductDataForCreation): void {
-    const productWithCategory: ProductWithCategory = this.productAdapter(product);
-    this.addProductInStore(productWithCategory);
-    this.isSaving = false;
-    this.dialogRef.close(productWithCategory);
-  }
-
-  private productAdapter(product: ProductDataForCreation): ProductWithCategory {
-    const { category_id, ...rest } = product;
-    const category: Category = this.dataStorageService.getCategoryById(category_id);
-    const date = new Date().toISOString();
-    const maxProductId = this.dataStorageService.findMaxProductId();
-
-    return {
-      ...rest,
-      id: maxProductId + 1,
-      created_at: date,
-      updated_at: date,
-      category,
-    };
   }
 
   private updateProduct(id: number, product: ProductDataForCreation): void {
@@ -196,20 +187,26 @@ export class DialogProductComponent implements OnInit {
         })
   }
 
+  private fakeUpdateProduct(id: number, product: ProductDataForCreation): void {
+    const productWithCategory: ProductWithCategory = this.productAdapter(product);
+    this.updateProductInStore(id, productWithCategory);
+    this.isSaving = false;
+    this.dialogRef.close(productWithCategory);
+  }
+
   private updateProductInStore(id: number, newProductData: ProductWithCategory): void {
     let idx = this.dataStorageService.products.findIndex((product) => product.id === id);
     this.dataStorageService.products[idx] = newProductData;
-    console.log('idx', this.dataStorageService.products);
   }
+
 
   private addProduct(product: ProductDataForCreation): void {
     this.dataStorageService.addProduct(product)
         .subscribe(
           {
             next: ((resp: ProductWithCategory) => {
-              // TODO: expiration_date must be more than manufacture_date
               this.isSaving = false;
-              console.log('submitt', resp);
+              console.log('submit', resp);
               this.addProductInStore(resp);
 
               this.dialogRef.close(resp);
@@ -222,22 +219,35 @@ export class DialogProductComponent implements OnInit {
         )
   }
 
+  private fakeAddProduct(product: ProductDataForCreation): void {
+    const productWithCategory: ProductWithCategory = this.productAdapter(product);
+    this.addProductInStore(productWithCategory);
+    this.isSaving = false;
+    this.dialogRef.close(productWithCategory);
+  }
+
   private addProductInStore(product: ProductWithCategory): void {
     this.dataStorageService.products.unshift(product);
-    console.log('addProductInStore');
+  }
+
+
+  private productAdapter(product: ProductDataForCreation): ProductWithCategory {
+    const { category_id, ...rest } = product;
+    const category: Category = this.dataStorageService.getCategoryById(category_id);
+    const date = new Date().toISOString();
+    const maxProductId = this.dataStorageService.findMaxProductId();
+
+    return {
+      ...rest,
+      id: maxProductId + 1,
+      created_at: date,
+      updated_at: date,
+      category,
+    };
   }
 
   public onToggleExpirationType(): void {
-    this.isExpirable = !!this.productForm.get('expiration_type')?.value || false;
-  }
-
-  public addExtraFields(data?: Fields): void {
-    const field = this.fb.group({
-      name: [data?.name || '', Validators.required],
-      value: [data?.value || '', Validators.required],
-      is_date: [data?.is_date || false],
-    });
-    this.fields.push(field);
+    this.isExpirable = !!this.productForm.get('expiration_type')?.value;
   }
 
   public removeExtraField(index: number): void {
