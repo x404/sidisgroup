@@ -119,42 +119,60 @@ export class DialogProductComponent implements OnInit {
     return this.productForm.get('fields') as FormArray;
   }
 
+
   public onSubmit(): void {
-    const {
-      category_id: categoryId,
-      name,
-      comment,
-      expiration_date,
-      manufacture_date,
-    } = this.productForm.value;
+    const formData: ProductDataForCreation= this.productForm.value;
 
-    const expirationDate: string | null = this.isExpirable ? String(this.datePipe.transform(expiration_date, 'yyyy-MM-dd')) : null;
-    const manufactureDate = String(this.datePipe.transform(manufacture_date, 'yyyy-MM-dd'));
-
-    if (!categoryId || !name || !comment || !this.validateFields(this.fields.value)) {
+    // Validate form fields
+    if (!this.isFormValid(formData)) {
       return;
     }
 
-    console.log('onSubmit', this.productForm.value);
     this.isSaving = true;
 
-    const fields = this.fields.value.map((field: Fields) => ({
-      ...field,
-      value: field.is_date ? this.datePipe.transform(field.value, 'yyyy-MM-dd') : field.value
-    }));
+    // Prepare product data for saving
+    const product = this.prepareProductData(formData);
 
+    // Save product data and refresh table
+    this.saveProductData(product);
+    this.dataStorageService.refreshTable();
+  }
 
-    const product: ProductDataForCreation = {
-      ...this.productForm.value,
-      category_id: +categoryId, // Get value from form control
-      name,
-      comment,
+  private isFormValid(formData: any): boolean {
+    const { category_id: categoryId, name, comment } = formData;
+    return categoryId && name && comment && this.validateFields(this.fields.value);
+  }
+
+  private prepareProductData(formData: any): ProductDataForCreation {
+    const {
+      category_id: categoryId,
+      expiration_date,
+      manufacture_date,
+    } = formData;
+
+    const expirationDate: string | null = this.isExpirable ? String(this.transformDate(expiration_date)) : null;
+    const manufactureDate: string = String(this.transformDate(manufacture_date));
+
+    const fields = this.transformFields(this.fields.value);
+
+    return {
+      ...formData,
+      category_id: +categoryId,
       expiration_type: this.isExpirable ? expirationType.expirable : expirationType.non_expirable,
       expiration_date: expirationDate,
       manufacture_date: manufactureDate,
-      fields
+      fields,
     };
+  }
 
+  private transformFields(fields: Fields[]): Fields[] {
+    return fields.map(field => ({
+      ...field,
+      value: field.is_date ? this.transformDate(field.value as string) : field.value || '',
+    }));
+  }
+
+  private saveProductData(product: ProductDataForCreation) {
     if (this.dataStorageService.isEditMode && this.data.editProductId !== undefined) {
       this.dataStorageService.resetEditMode();
       if (!environment.isDevMode) {
@@ -169,8 +187,10 @@ export class DialogProductComponent implements OnInit {
         this.fakeAddProduct(product);
       }
     }
+  }
 
-    this.dataStorageService.refreshTable();
+  private transformDate(date: string): string {
+    return String(this.datePipe.transform(date, 'yyyy-MM-dd'));
   }
 
   private validateFields(fields: Fields[]): boolean {
@@ -196,7 +216,6 @@ export class DialogProductComponent implements OnInit {
   }
 
   private fakeUpdateProduct(id: number, product: ProductDataForCreation): void {
-    console.log(product);
     const productWithCategory: ProductWithCategory | undefined = this.productAdapterForEditMode(product);
 
     if (!productWithCategory) {
@@ -245,7 +264,7 @@ export class DialogProductComponent implements OnInit {
   }
 
 
-  private productAdapter( product: ProductDataForCreation): ProductWithCategory {
+  private productAdapter(product: ProductDataForCreation): ProductWithCategory {
     const { category_id, ...rest } = product;
     const category: Category = this.dataStorageService.getCategoryById(category_id);
     const date = new Date().toISOString();
@@ -268,8 +287,6 @@ export class DialogProductComponent implements OnInit {
       return;
     }
 
-    console.log(productInStore)
-
     const { category_id, ...rest } = product;
     const category: Category = this.dataStorageService.getCategoryById(category_id);
     const date = new Date().toISOString();
@@ -289,9 +306,5 @@ export class DialogProductComponent implements OnInit {
 
   public removeExtraField(index: number): void {
     this.fields.removeAt(index);
-  }
-
-  onCancel() {
-    // this.dataStorageService.resetEditMode();
   }
 }
