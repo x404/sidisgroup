@@ -5,7 +5,7 @@
 
   <ng-template #productsBlock>
     <div *ngIf="!productsLoading; else loadingBlock">
-      <div *ngIf="this.dataStorageService.products.length; else noProducts">
+      <div *ngIf="this.dataStorageService.products?.length; else noProducts">
 
         <table mat-table [dataSource]="dataStorageService.dataSource" class="mat-elevation-z8">
           <!-- Position Column -->

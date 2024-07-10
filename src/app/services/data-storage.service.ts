@@ -3,7 +3,6 @@ import { HttpClient, HttpParams } from "@angular/common/http";
 import { mergeMap, Observable, of } from "rxjs";
 import { MatTableDataSource } from "@angular/material/table";
 import { environment } from "../../environment/environment";
-import { MockupService } from "./mockup.service";
 
 export interface ProductResponse {
   count: number,
@@ -55,15 +54,15 @@ export class DataStorageService {
 
 
   constructor(
-    private http: HttpClient,
-    public mockupService: MockupService
+    private http: HttpClient
   ) {}
 
 
   public fetchProducts(): Observable<ProductWithCategory[]> {
     if (environment.isDevMode){
-      return of(this.mockupService.products as any);
+      return this.http.get<ProductWithCategory[]>(environment.localProductsUrl)
     }
+
     let params = new HttpParams();
     // params = params.append('limit', '5');
     // params = params.append('offset', '0');
@@ -79,10 +78,8 @@ export class DataStorageService {
   }
 
   public fetchCategories(): Observable<Category[]> {
-    if (environment.isDevMode) {
-      return of(this.mockupService.categories as any);
-    }
-    return this.http.get<Category[]>(environment.categoryUrl)
+    const url = environment.isDevMode ? environment.localCategoryUrl : environment.categoryUrl;
+    return this.http.get<Category[]>(url)
   }
 
   public addProduct(product: ProductDataForCreation): Observable<ProductWithCategory> {
@@ -90,7 +87,6 @@ export class DataStorageService {
   }
 
   public updateProduct(id: number, product: ProductDataForCreation): Observable<ProductWithCategory> {
-    // TODO: add loader
     return this.http.put<ProductWithCategory>(environment.productsUrl + id, product);
   }
 
