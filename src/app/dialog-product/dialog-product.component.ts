@@ -66,7 +66,7 @@ export class DialogProductComponent implements OnInit {
     this.productForm = this.fb.group({
       name: [''],
       category_id: ['', Validators.required],
-      comment: ['Hello guys'],
+      comment: [''],
       expiration_type: [false],
       expiration_date: [new Date(), Validators.required],
       manufacture_date: [new Date(), Validators.required],
