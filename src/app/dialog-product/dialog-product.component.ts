@@ -139,8 +139,8 @@ export class DialogProductComponent implements OnInit {
   }
 
   private isFormValid(formData: any): boolean {
-    const { category_id: categoryId, name, comment } = formData;
-    return categoryId && name && comment && this.validateFields(this.fields.value);
+    const { category_id: categoryId, name } = formData;
+    return categoryId && name && this.validateFields(this.fields.value);
   }
 
   private prepareProductData(formData: any): ProductDataForCreation {
