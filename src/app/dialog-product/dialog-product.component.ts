@@ -2,17 +2,14 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
 import {
-  Category,
   DataStorageService,
-  Fields,
-  ProductDataForCreation,
-  ProductWithCategory
 } from "../services/data-storage.service";
 import { DatePipe } from "@angular/common";
 
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { environment } from "../../environment/environment";
+import { Category, Fields, ProductDataForCreation, ProductWithCategory } from "../types/interfaces";
 
 export interface DialogData {
   categories: Category[],

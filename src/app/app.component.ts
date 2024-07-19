@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {
-  Category,
   DataStorageService,
-  ProductWithCategory
 } from "./services/data-storage.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogData, DialogProductComponent } from "./dialog-product/dialog-product.component";
 import { environment } from "../environment/environment";
+import { Category, ProductWithCategory } from "./types/interfaces";
 
 @Component({
   selector: 'app-root',
