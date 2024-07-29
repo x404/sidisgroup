@@ -23,9 +23,22 @@ ps.
 ---
 **How to update to Angular 17.3.0**
 
-* ```nvm use v18```
+* ```nvm use v20.10.0```
 
 * ```ng update @angular/core@17 @angular/cli@17```
 * ```ng update @angular/material@17```
 
 or update in manual mode the package.json file
+
+```nvm use `cat .nvmrc````
+
+
+References:
+
+* [https://angular.dev/reference/versions](https://angular.dev/reference/versions)
+* [https://www.npmjs.com/package/@angular/cli?activeTab=versions](https://www.npmjs.com/package/@angular/cli?activeTab=versions)
+* [https://www.devxperiences.com/pzwp1/2024/01/13/angular-create-a-project-with-any-version/](https://www.devxperiences.com/pzwp1/2024/01/13/angular-create-a-project-with-any-version/)
+* [https://medium.com/ng-gotchas/easily-create-the-legacy-angular-apps-v2-v4-v5-v6-ee4a22d7eb60](https://medium.com/ng-gotchas/easily-create-the-legacy-angular-apps-v2-v4-v5-v6-ee4a22d7eb60)
+* [https://www.npmjs.com/package/@angular/material?activeTab=versions](https://www.npmjs.com/package/@angular/material?activeTab=versions)
+* 
+
