@@ -19,3 +19,13 @@ Result: [https://x404.github.io/sidisgroup/](https://x404.github.io/sidisgroup/)
 
 ps.
 ```ng deploy --base-href=https://x404.github.io/sidisgroup/```
+
+---
+**How to update for Angular 16.2.12**
+
+* ```nvm use v18```
+
+* ```ng update @angular/core@16 @angular/cli@16```
+* ```ng update @angular/material@16```
+
+or update in manual mode the package.json file
