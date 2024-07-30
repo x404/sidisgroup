@@ -21,12 +21,12 @@ ps.
 ```ng deploy --base-href=https://x404.github.io/sidisgroup/```
 
 ---
-**How to update to Angular 17.3.0**
+**How to update to Angular 18.1.2**
 
 * ```nvm use v20.10.0```
 
-* ```ng update @angular/core@17 @angular/cli@17```
-* ```ng update @angular/material@17```
+* ```ng update @angular/core@18 @angular/cli@18```
+* ```ng update @angular/material@18```
 
 or update in manual mode the package.json file
 
