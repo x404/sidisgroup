@@ -40,5 +40,5 @@ References:
 * [https://www.devxperiences.com/pzwp1/2024/01/13/angular-create-a-project-with-any-version/](https://www.devxperiences.com/pzwp1/2024/01/13/angular-create-a-project-with-any-version/)
 * [https://medium.com/ng-gotchas/easily-create-the-legacy-angular-apps-v2-v4-v5-v6-ee4a22d7eb60](https://medium.com/ng-gotchas/easily-create-the-legacy-angular-apps-v2-v4-v5-v6-ee4a22d7eb60)
 * [https://www.npmjs.com/package/@angular/material?activeTab=versions](https://www.npmjs.com/package/@angular/material?activeTab=versions)
-* 
+* [https://v17.angular.io/guide/standalone-migration](https://v17.angular.io/guide/standalone-migration)
 

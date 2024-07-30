@@ -1,15 +1,23 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose } from "@angular/material/dialog";
+import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms";
 import {
   DataStorageService,
 } from "../services/data-storage.service";
-import { DatePipe } from "@angular/common";
+import { DatePipe, NgIf, NgFor } from "@angular/common";
 
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatOption } from '@angular/material/core';
 import { environment } from "../../environment/environment";
 import { Category, Fields, ProductDataForCreation, ProductWithCategory } from "../types/interfaces";
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatSelect } from '@angular/material/select';
+import { MatInput } from '@angular/material/input';
+import { MatFormField, MatLabel, MatHint, MatSuffix } from '@angular/material/form-field';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 
 export interface DialogData {
   categories: Category[],
@@ -35,13 +43,41 @@ export const MY_FORMATS = {
 
 
 @Component({
-  selector: 'app-dialog-product',
-  templateUrl: './dialog-product.component.html',
-  styleUrls: ['./dialog-product.component.scss'],
-  providers: [
-    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
-  ],
+    selector: 'app-dialog-product',
+    templateUrl: './dialog-product.component.html',
+    styleUrls: ['./dialog-product.component.scss'],
+    providers: [
+        { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    ],
+    standalone: true,
+    imports: [
+        MatDialogTitle,
+        NgIf,
+        ReactiveFormsModule,
+        CdkScrollable,
+        MatDialogContent,
+        MatFormField,
+        MatLabel,
+        MatInput,
+        MatSelect,
+        NgFor,
+        MatOption,
+        MatCheckbox,
+        MatDatepickerInput,
+        MatHint,
+        MatDatepickerToggle,
+        MatSuffix,
+        MatDatepicker,
+        MatCard,
+        MatCardHeader,
+        MatCardTitle,
+        MatCardContent,
+        MatCardActions,
+        MatButton,
+        MatDialogActions,
+        MatDialogClose,
+    ],
 })
 
 
