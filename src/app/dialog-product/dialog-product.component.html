@@ -1,12 +1,14 @@
 <h1 mat-dialog-title>
-  <ng-container *ngIf="!dataStorageService.isEditMode; else editTitle">Add product</ng-container>
-</h1>
-<ng-template #editTitle>
-  Edit product
-  <span class="small">
+  @if (!dataStorageService.isEditMode) {
+    Add product
+  } @else {
+
+    Edit product
+    <span class="small">
     (id: <strong>{{ this.data.editProductId }}</strong>)
   </span>
-</ng-template>
+  }
+</h1>
 
 <form
   [formGroup]="productForm"
@@ -56,21 +58,23 @@
       Expirable
     </mat-checkbox>
 
-    <mat-form-field
-      appearance="fill"
-      class="mt-1 mb-2"
-      *ngIf="isExpirable"
-    >
-      <mat-label>Expiration date</mat-label>
-      <input
-        matInput
-        [matDatepicker]="picker"
-        formControlName="expiration_date"
+    @if (isExpirable) {
+      <mat-form-field
+        appearance="fill"
+        class="mt-1 mb-2"
       >
-      <mat-hint></mat-hint>
-      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
-    </mat-form-field>
+        <mat-label>Expiration date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          formControlName="expiration_date"
+        >
+        <mat-hint></mat-hint>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+    }
+
 
     <mat-form-field
       appearance="fill"
@@ -87,7 +91,9 @@
       <mat-datepicker #manufacture_date_picker></mat-datepicker>
     </mat-form-field>
 
-    <p class="error" *ngIf="error">{{ error }}</p>
+    @if (error) {
+      <p class="error">{{ error }}</p>
+    }
 
     <div formArrayName="fields">
       <h5>Extra fields</h5>
@@ -108,20 +114,19 @@
             <div class="d-flex">
               <mat-checkbox formControlName="is_date" class="mb-3 me-3 mt-3 flex-shrink-0">Is Date</mat-checkbox>
 
-              <ng-container *ngIf="!field.get('is_date')?.value; else datePicker">
+              @if (!field.get('is_date')?.value) {
                 <mat-form-field appearance="fill" class="my-1">
                   <mat-label>Value</mat-label>
                   <input matInput formControlName="value">
                 </mat-form-field>
-              </ng-container>
-              <ng-template #datePicker>
+              } @else {
                 <mat-form-field appearance="fill" class="my-1">
                   <mat-label>Value</mat-label>
                   <input matInput [matDatepicker]="fieldDatePicker" formControlName="value">
                   <mat-datepicker-toggle matIconSuffix [for]="fieldDatePicker"></mat-datepicker-toggle>
                   <mat-datepicker #fieldDatePicker></mat-datepicker>
                 </mat-form-field>
-              </ng-template>
+              }
             </div>
           </mat-card-content>
 
@@ -154,7 +159,7 @@
   </div>
   <div mat-dialog-actions>
     <button mat-button color="primary" cdkFocusInitial [disabled]="isSaving">
-      {{isSaving ? 'Saving.. ' : 'Save'}}
+      {{ isSaving ? 'Saving.. ' : 'Save' }}
     </button>
     <button mat-button matDialogClose="">Cancel</button>
   </div>

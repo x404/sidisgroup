@@ -4,7 +4,7 @@ import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } fr
 import {
   DataStorageService,
 } from "../services/data-storage.service";
-import { DatePipe, NgIf, NgFor } from "@angular/common";
+import { DatePipe, NgFor } from "@angular/common";
 
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatOption } from '@angular/material/core';
@@ -53,7 +53,6 @@ export const MY_FORMATS = {
     standalone: true,
     imports: [
         MatDialogTitle,
-        NgIf,
         ReactiveFormsModule,
         CdkScrollable,
         MatDialogContent,
