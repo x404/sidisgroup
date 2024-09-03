@@ -1,41 +1,50 @@
 import { Component, OnInit } from '@angular/core';
 import {
   DataStorageService,
-} from "./services/data-storage.service";
+} from "@services/data-storage.service";
 import { MatDialog } from "@angular/material/dialog";
 import { DialogData, DialogProductComponent } from "./dialog-product/dialog-product.component";
-import { environment } from "../environment/environment";
-import { Category, ProductWithCategory } from "./types/interfaces";
+import { environment } from "@environment/environment";
+import { type Category, type ProductWithCategory } from "@interfaces/interfaces";
 import { MatIcon } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatIconButton, MatButton } from '@angular/material/button';
-import { MatTable, MatColumnDef, MatHeaderCellDef, MatHeaderCell, MatCellDef, MatCell, MatHeaderRowDef, MatHeaderRow, MatRowDef, MatRow } from '@angular/material/table';
-import { NgIf, NgFor, DatePipe } from '@angular/common';
+import {
+  MatTable,
+  MatColumnDef,
+  MatHeaderCellDef,
+  MatHeaderCell,
+  MatCellDef,
+  MatCell,
+  MatHeaderRowDef,
+  MatHeaderRow,
+  MatRowDef,
+  MatRow
+} from '@angular/material/table';
+import { DatePipe } from '@angular/common';
 
 @Component({
-    selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss'],
-    standalone: true,
-    imports: [
-        NgIf,
-        MatTable,
-        MatColumnDef,
-        MatHeaderCellDef,
-        MatHeaderCell,
-        MatCellDef,
-        MatCell,
-        NgFor,
-        MatIconButton,
-        MatTooltip,
-        MatIcon,
-        MatHeaderRowDef,
-        MatHeaderRow,
-        MatRowDef,
-        MatRow,
-        MatButton,
-        DatePipe,
-    ],
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  standalone: true,
+  imports: [
+    MatTable,
+    MatColumnDef,
+    MatHeaderCellDef,
+    MatHeaderCell,
+    MatCellDef,
+    MatCell,
+    MatIconButton,
+    MatTooltip,
+    MatIcon,
+    MatHeaderRowDef,
+    MatHeaderRow,
+    MatRowDef,
+    MatRow,
+    MatButton,
+    DatePipe,
+  ],
 })
 export class AppComponent implements OnInit {
   title = 'Products';
@@ -65,7 +74,7 @@ export class AppComponent implements OnInit {
     this.dataStorageService.fetchProducts()
         .subscribe({
             next: (response: ProductWithCategory[]) => {
-              console.log(response);
+              // console.log(response);
               this.dataStorageService.products = response;
               this.dataStorageService.refreshTable();
               this.productsLoading = false;
@@ -92,7 +101,7 @@ export class AppComponent implements OnInit {
         )
   }
 
-  onAddProduct(){
+  onAddProduct() {
     this.dataStorageService.resetEditMode();
     this.openDialog();
   }
@@ -133,14 +142,14 @@ export class AppComponent implements OnInit {
   // }
 
   public onDeleteProduct(id: number): void {
-    if (!environment.isDevMode){
+    if (!environment.isDevMode) {
       this.deleteProductById(id);
     } else {
       this.fakeDeleteProductById(id);
     }
   }
 
-  private deleteProductById(id: number){
+  private deleteProductById(id: number) {
     this.dataStorageService.deleteProductById(id).subscribe({
       next: () => {
         this.deleteProductFromStore(id);
