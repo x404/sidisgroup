@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import {
   DataStorageService,
 } from "@services/data-storage.service";
@@ -52,13 +52,14 @@ export class AppComponent implements OnInit {
   productError: string = '';
   categoryError: string = '';
 
-  productsLoading: boolean = true;
+  productsLoading = signal<boolean>(true);
   categoriesLoading: boolean = true;
 
   displayedColumns: string[] = ['position', 'name', 'category', 'comment', 'expiration_date', 'manufacture_date', 'created_at', 'updated_at', 'fields', 'edit'];
 
+  dataStorageService = inject(DataStorageService);
+
   constructor(
-    public dataStorageService: DataStorageService,
     public dialog: MatDialog
   ) {
   }
@@ -69,7 +70,7 @@ export class AppComponent implements OnInit {
   }
 
   private fetchProducts(): void {
-    this.productsLoading = true;
+    this.productsLoading.set(true);
 
     this.dataStorageService.fetchProducts()
         .subscribe({
@@ -77,7 +78,7 @@ export class AppComponent implements OnInit {
               // console.log(response);
               this.dataStorageService.products = response;
               this.dataStorageService.refreshTable();
-              this.productsLoading = false;
+              this.productsLoading.set(false);
             },
             error: (error) => {
               this.productError = error.status === 404 ? `Error: ${error.status}. The requested resource was not found on this server.` : error.message;

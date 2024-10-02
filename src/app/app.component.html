@@ -4,7 +4,7 @@
   @if (productError){
     <div class="error">{{productError}}</div>
   } @else {
-    @if (!productsLoading){
+    @if (!productsLoading()){
       <div>
         @if (this.dataStorageService.products.length){
           <div>

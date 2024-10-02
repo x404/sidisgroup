@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, Inject, OnInit } from '@angular/core';
 import {
   MAT_DIALOG_DATA,
   MatDialogRef,
@@ -98,12 +98,12 @@ export class DialogProductComponent implements OnInit {
   categories: Category[] = [];
   isExpirable: boolean = false;
   isSaving: boolean = false;
+  dataStorageService = inject(DataStorageService);
 
   constructor(
     public dialogRef: MatDialogRef<DialogProductComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: DialogData,
-    public dataStorageService: DataStorageService,
     private datePipe: DatePipe,
     private fb: FormBuilder
   ) {
