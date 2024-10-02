@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
-import { mergeMap, Observable, of } from "rxjs";
+import { from, mergeMap, Observable } from "rxjs";
 import { MatTableDataSource } from "@angular/material/table";
 import { environment } from "../../environment/environment";
 import { Category, ProductDataForCreation, ProductResponse, ProductWithCategory } from "../types/interfaces";
@@ -36,8 +36,8 @@ export class DataStorageService {
      .pipe(
        mergeMap((response) => {
          return Array.isArray(response)
-           ? of(response)
-           : of(response.results);
+           ? from([response])
+           : from([response.results]);
        })
      );
   }

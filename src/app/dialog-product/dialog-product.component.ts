@@ -1,15 +1,36 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { FormArray, FormBuilder, FormGroup, Validators } from "@angular/forms";
+import { Component, inject, Inject, OnInit } from '@angular/core';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogRef,
+  MatDialogTitle,
+  MatDialogContent,
+  MatDialogActions,
+  MatDialogClose
+} from "@angular/material/dialog";
+import { FormArray, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from "@angular/forms";
 import {
   DataStorageService,
-} from "../services/data-storage.service";
+} from "@services/data-storage.service";
 import { DatePipe } from "@angular/common";
 
+import { environment } from "@environment/environment";
+import {
+  type Category,
+  type Fields,
+  type ProductDataForCreation,
+  type ProductWithCategory
+} from "@interfaces/interfaces";
+
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
-import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
-import { environment } from "../../environment/environment";
-import { Category, Fields, ProductDataForCreation, ProductWithCategory } from "../types/interfaces";
+import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatOption } from '@angular/material/core';
+import { MatButton } from '@angular/material/button';
+import { MatCard, MatCardHeader, MatCardTitle, MatCardContent, MatCardActions } from '@angular/material/card';
+import { MatDatepickerInput, MatDatepickerToggle, MatDatepicker } from '@angular/material/datepicker';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatSelect } from '@angular/material/select';
+import { MatInput } from '@angular/material/input';
+import { MatFormField, MatLabel, MatHint, MatSuffix } from '@angular/material/form-field';
+import { CdkScrollable } from '@angular/cdk/scrolling';
 
 export interface DialogData {
   categories: Category[],
@@ -42,6 +63,32 @@ export const MY_FORMATS = {
     { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
     { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
   ],
+  standalone: true,
+  imports: [
+    MatDialogTitle,
+    ReactiveFormsModule,
+    CdkScrollable,
+    MatDialogContent,
+    MatFormField,
+    MatLabel,
+    MatInput,
+    MatSelect,
+    MatOption,
+    MatCheckbox,
+    MatDatepickerInput,
+    MatHint,
+    MatDatepickerToggle,
+    MatSuffix,
+    MatDatepicker,
+    MatCard,
+    MatCardHeader,
+    MatCardTitle,
+    MatCardContent,
+    MatCardActions,
+    MatButton,
+    MatDialogActions,
+    MatDialogClose,
+  ],
 })
 
 
@@ -51,12 +98,12 @@ export class DialogProductComponent implements OnInit {
   categories: Category[] = [];
   isExpirable: boolean = false;
   isSaving: boolean = false;
+  dataStorageService = inject(DataStorageService);
 
   constructor(
     public dialogRef: MatDialogRef<DialogProductComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: DialogData,
-    public dataStorageService: DataStorageService,
     private datePipe: DatePipe,
     private fb: FormBuilder
   ) {
@@ -118,7 +165,7 @@ export class DialogProductComponent implements OnInit {
 
 
   public onSubmit(): void {
-    const formData: ProductDataForCreation= this.productForm.value;
+    const formData: ProductDataForCreation = this.productForm.value;
 
     // Validate form fields
     if (!this.isFormValid(formData)) {
