@@ -49,11 +49,11 @@ import { DatePipe } from '@angular/common';
 export class AppComponent implements OnInit {
   title = 'Products';
 
-  productError: string = '';
-  categoryError: string = '';
+  productError = signal<string>('');
+  categoryError = signal<string>('');
 
   productsLoading = signal<boolean>(true);
-  categoriesLoading: boolean = true;
+  categoriesLoading = signal<boolean>(true);
 
   displayedColumns: string[] = ['position', 'name', 'category', 'comment', 'expiration_date', 'manufacture_date', 'created_at', 'updated_at', 'fields', 'edit'];
 
@@ -92,11 +92,12 @@ export class AppComponent implements OnInit {
         .subscribe({
             next: (response: Category[]) => {
               this.dataStorageService.categories = response;
-              this.categoriesLoading = false;
+              this.categoriesLoading.set(false);
             },
             error: (error) => {
-              console.error('Request categories error ', error)
-              this.categoryError = error.status === 404 ? `Error: ${error.status}. The requested resource was not found on this server.` : error.message;
+              console.error('Request categories error ', error);
+              const errorMessage = error.status === 404 ? `Error: ${error.status}. The requested resource was not found on this server.` : error.message;
+              this.categoryError.set(errorMessage);
             }
           }
         )
