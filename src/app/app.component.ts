@@ -110,7 +110,7 @@ export class AppComponent implements OnInit {
 
   openDialog(productId?: number): void {
     const data: DialogData = { categories: this.dataStorageService.categories }
-    if (this.dataStorageService.isEditMode) {
+    if (this.dataStorageService.isEditMode()) {
       data['editProductId'] = productId;
     }
 
@@ -134,7 +134,7 @@ export class AppComponent implements OnInit {
   }
 
   public onEditProduct(id: number): void {
-    this.dataStorageService.isEditMode = true;
+    this.dataStorageService.isEditMode.set(true);
     this.openDialog(id);
   }
 

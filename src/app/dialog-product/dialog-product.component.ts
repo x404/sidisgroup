@@ -121,7 +121,7 @@ export class DialogProductComponent implements OnInit {
   ngOnInit(): void {
     this.categories = this.data?.categories;
 
-    if (this.dataStorageService.isEditMode) {
+    if (this.dataStorageService.isEditMode()) {
       this.presetFormControls();
     }
   }
@@ -217,7 +217,7 @@ export class DialogProductComponent implements OnInit {
   }
 
   private saveProductData(product: ProductDataForCreation) {
-    if (this.dataStorageService.isEditMode && this.data.editProductId !== undefined) {
+    if (this.dataStorageService.isEditMode() && this.data.editProductId !== undefined) {
       this.dataStorageService.resetEditMode();
       if (!environment.isDevMode) {
         this.updateProduct(this.data.editProductId, product);

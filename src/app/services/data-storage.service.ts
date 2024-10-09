@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { from, mergeMap, Observable } from "rxjs";
 import { MatTableDataSource } from "@angular/material/table";
@@ -13,7 +13,7 @@ import { Category, ProductDataForCreation, ProductResponse, ProductWithCategory 
 export class DataStorageService {
   public products: ProductWithCategory[] = [];
   public categories: Category[] = [];
-  isEditMode: boolean = false;
+  isEditMode = signal<boolean>(false);
 
   dataSource = new MatTableDataSource<ProductWithCategory>([]);
 
@@ -64,7 +64,7 @@ export class DataStorageService {
   }
 
   public resetEditMode() {
-    this.isEditMode = false;
+    this.isEditMode.set(false);
   }
 
 
