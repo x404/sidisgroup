@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { from, mergeMap, Observable } from "rxjs";
 import { MatTableDataSource } from "@angular/material/table";
-import { environment } from "../../environment/environment";
+import { environment } from "@environment/environment";
 import { Category, ProductDataForCreation, ProductResponse, ProductWithCategory } from "../types/interfaces";
 
 

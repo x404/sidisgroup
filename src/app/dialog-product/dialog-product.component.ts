@@ -30,7 +30,6 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatSelect } from '@angular/material/select';
 import { MatInput } from '@angular/material/input';
 import { MatFormField, MatLabel, MatHint, MatSuffix } from '@angular/material/form-field';
-import { CdkScrollable } from '@angular/cdk/scrolling';
 
 export interface DialogData {
   categories: Category[],
@@ -67,7 +66,6 @@ export const MY_FORMATS = {
   imports: [
     MatDialogTitle,
     ReactiveFormsModule,
-    CdkScrollable,
     MatDialogContent,
     MatFormField,
     MatLabel,
@@ -87,7 +85,7 @@ export const MY_FORMATS = {
     MatCardActions,
     MatButton,
     MatDialogActions,
-    MatDialogClose,
+    MatDialogClose
   ],
 })
 

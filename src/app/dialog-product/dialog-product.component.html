@@ -30,12 +30,13 @@
     >
       <mat-label>Select</mat-label>
       <mat-select formControlName="category_id">
-        <mat-option
-          *ngFor="let category of categories"
-          [value]="category?.id"
-        >
-          {{ category?.name }}
-        </mat-option>
+        @for (category of categories; track category.id) {
+          <mat-option
+            [value]="category?.id"
+          >
+            {{ category?.name }}
+          </mat-option>
+        }
       </mat-select>
     </mat-form-field>
 
